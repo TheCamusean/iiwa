@@ -1,0 +1,291 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find fanuc_resources)/urdf/common_materials.xacro"/>
+
+
+  <xacro:macro name="fanuc_lrmate200id_7l" params="prefix">
+    <!-- links: main serial chain -->
+    <link name="${prefix}base_link">
+			<inertial>
+				<origin xyz="0 0 0.5" rpy="0 0 0"/>
+				<mass value="1"/>
+				<inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+			</inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://logimat_description/meshes/robot/lrmate200id_7l/base_link.stl"/>
+        </geometry>
+        <xacro:material_fanuc_gray28 />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://logimat_description/meshes/robot/lrmate200id_7l/base_link.stl"/>
+        </geometry>
+      </collision>
+    </link>
+    <link name="${prefix}link_1">
+			<inertial>
+				<origin xyz="0 0 0.5" rpy="0 0 0"/>
+				<mass value="1"/>
+				<inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+			</inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://logimat_description/meshes/robot/lrmate200id_7l/link_1.stl"/>
+        </geometry>
+        <xacro:material_fanuc_yellow />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://logimat_description/meshes/robot/lrmate200id_7l/link_1.stl"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="${prefix}link_2">
+			<inertial>
+				<origin xyz="0 0 0.5" rpy="0 0 0"/>
+				<mass value="1"/>
+				<inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+			</inertial>
+      <visual>
+        <origin xyz="0.005 0.05 0.002" rpy="1.57 0 0"/>
+        <geometry>
+          <mesh filename="package://logimat_description/meshes/robot/lrmate200id_7l/link_2.stl"/>
+        </geometry>
+        <xacro:material_fanuc_yellow />
+      </visual>
+      <collision>
+        <origin xyz="0.005 0.055 0.002" rpy="1.57 0 0"/>
+        <geometry>
+          <mesh filename="package://logimat_description/meshes/robot/lrmate200id_7l/link_2.stl"/>
+        </geometry>
+      </collision>
+    </link>
+    <link name="${prefix}link_3">
+			<inertial>
+				<origin xyz="0 0 0.5" rpy="0 0 0"/>
+				<mass value="1"/>
+				<inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+			</inertial>
+      <visual>
+        <origin xyz="0.004 0.045 0" rpy="1.57 0 0"/>
+        <geometry>
+          <mesh filename="package://logimat_description/meshes/robot/lrmate200id_7l/link_3.stl"/>
+        </geometry>
+        <xacro:material_fanuc_yellow />
+      </visual>
+      <collision>
+        <origin xyz="0.004 0.045 0" rpy="1.57 0 0"/>
+        <geometry>
+          <mesh filename="package://logimat_description/meshes/robot/lrmate200id_7l/link_3.stl"/>
+        </geometry>
+      </collision>
+    </link>
+   <link name="${prefix}link_4">
+			<inertial>
+				<origin xyz="0 0 0.5" rpy="0 0 0"/>
+				<mass value="1"/>
+				<inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+			</inertial>
+      <visual>
+        <origin xyz="0 0.005 0" rpy="0 -1.57 0"/>
+        <geometry>
+          <mesh filename="package://logimat_description/meshes/robot/lrmate200id_7l/link_4.stl"/>
+        </geometry>
+        <xacro:material_fanuc_yellow />
+      </visual>
+      <collision>
+        <origin xyz="0 0.005 0" rpy="0 -1.57 0"/>
+        <geometry>
+          <mesh filename="package://logimat_description/meshes/robot/lrmate200id_7l/link_4.stl"/>
+        </geometry>
+      </collision>
+    </link>
+    <link name="${prefix}link_5">
+			<inertial>
+				<origin xyz="0 0 0.5" rpy="0 0 0"/>
+				<mass value="1"/>
+				<inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+			</inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="-1.57 0.0 -1.57"/>
+        <geometry>
+          <mesh filename="package://logimat_description/meshes/robot/lrmate200id_7l/link_5.stl"/>
+        </geometry>
+        <xacro:material_fanuc_yellow />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="-1.57 0.0 -1.57"/>
+        <geometry>
+          <mesh filename="package://logimat_description/meshes/robot/lrmate200id_7l/link_5.stl"/>
+        </geometry>
+      </collision>
+    </link>
+    <link name="${prefix}link_6">
+			<inertial>
+				<origin xyz="0 0 0.5" rpy="0 0 0"/>
+				<mass value="1"/>
+				<inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+			</inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0.0 0 0"/>
+        <geometry>
+          <mesh filename="package://logimat_description/meshes/robot/lrmate200id_7l/link_6.stl"/>
+        </geometry>
+        <xacro:material_fanuc_black />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://logimat_description/meshes/robot/lrmate200id_7l/link_6.stl"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- joints: main serial chain -->
+    <joint name="${prefix}joint_1" type="revolute">
+      <origin xyz="0 0 0.169" rpy="0 0 0" />
+      <parent link="${prefix}base_link" />
+      <child link="${prefix}link_1" />
+      <axis xyz="0 0 1" />
+      <limit effort="0" lower="-2.965" upper="2.965" velocity="6.46" />
+    </joint>
+
+    <joint name="${prefix}joint_2" type="revolute">
+      <origin xyz="0.05 0 0.15" rpy="-1.57 0 0"/>
+      <parent link="${prefix}link_1" />
+      <child link="${prefix}link_2" />
+      <axis xyz="0 0 1" />
+      <limit effort="0" lower="-1.745329" upper="2.530727" velocity="5.41" />
+    </joint>
+   <joint name="${prefix}joint_3" type="revolute">
+      <origin xyz="0 -0.45 0.0" rpy="0 0 0"/>
+      <parent link="${prefix}link_2" />
+      <child link="${prefix}link_3" />
+      <axis xyz="0 0 -1" />
+      <limit effort="0" lower="-2.450966" upper="4.886922" velocity="7.155" />
+    </joint>
+     <joint name="${prefix}joint_4" type="revolute">
+      <origin xyz="0.093 -0.0425 0.0" rpy="1.57 0 1.57"/>
+      <parent link="${prefix}link_3"/>
+      <child link="${prefix}link_4"/>
+      <axis xyz="0 0 -1"/>
+      <limit effort="0" lower="-3.315" upper="3.315" velocity="9.60" />
+    </joint>
+    <joint name="${prefix}joint_5" type="revolute">
+      <origin xyz="0.0 0.0 0.335" rpy="-1.57 -1.57 0"/>
+      <parent link="${prefix}link_4"/>
+      <child link="${prefix}link_5"/>
+      <axis xyz="0 0 -1"/>
+      <limit effort="0" lower="-2.18" upper="2.18" velocity="9.51" />
+    </joint>
+    <joint name="${prefix}joint_6" type="revolute">
+      <origin xyz="0.080 0 0" rpy="0 1.57 0"/>
+      <parent link="${prefix}link_5"/>
+      <child link="${prefix}link_6"/>
+      <axis xyz="0 0 1"/>
+      <limit effort="0" lower="-6.285" upper="6.285" velocity="17.45" />
+    </joint>
+
+    <!-- ROS-Industrial 'base' frame: base_link to Fanuc World Coordinates transform -->
+    <link name="${prefix}base" />
+    <joint name="${prefix}base_link-base" type="fixed">
+      <origin xyz="0 0 0.330" rpy="0 0 0"/>
+      <parent link="${prefix}base_link"/>
+      <child link="${prefix}base"/>
+    </joint>
+
+    <!-- ROS-Industrial 'flange' frame: attachment point for EEF models -->
+    <link name="${prefix}flange" />
+    <joint name="${prefix}joint_6-flange" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="${prefix}link_6" />
+      <child link="${prefix}flange" />
+    </joint>
+
+    <!-- ROS-Industrial 'tool0' frame: all-zeros tool frame -->
+<!--
+    <link name="${prefix}tool0" />
+    <joint name="${prefix}link_6-tool0" type="fixed">
+      <origin xyz="0 0 0" rpy="${3.14159268} ${-3.14159268/2.0} 0" />
+      <parent link="${prefix}link_6" />
+      <child link="${prefix}tool0" />
+    </joint>
+-->
+
+  <transmission name="tran_1">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="joint_1">
+				<hardwareInterface>PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="motor_1">
+				<hardwareInterface>PositionJointInterface</hardwareInterface>
+				<mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <transmission name="tran_2">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="joint_2">
+				<hardwareInterface>PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="motor_2">
+				<hardwareInterface>PositionJointInterface</hardwareInterface>
+				<mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <transmission name="tran_3">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="joint_3">
+				<hardwareInterface>PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="motor_3">
+				<hardwareInterface>PositionJointInterface</hardwareInterface>
+				<mechanicalReduction>1</mechanicalReduction>
+			</actuator>
+    </transmission>
+
+    <transmission name="tran_4">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="joint_4">
+				<hardwareInterface>PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="motor_4">
+				<hardwareInterface>PositionJointInterface</hardwareInterface>
+				<mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <transmission name="tran_5">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="joint_5">
+				<hardwareInterface>PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="motor_5">
+				<hardwareInterface>PositionJointInterface</hardwareInterface>
+				<mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <transmission name="tran_6">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="joint_6">
+				<hardwareInterface>PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="motor_6">
+				<hardwareInterface>PositionJointInterface</hardwareInterface>
+				<mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+  </xacro:macro>
+
+
+</robot>

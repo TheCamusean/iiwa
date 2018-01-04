@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller" 
+xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Import all Gazebo-customization elements, including Gazebo colors -->
+  <xacro:include filename="$(find iiwa7_description)/urdf/mako_3d/mako_3d.gazebo.xacro" />
+
+  <xacro:property name="pi" value="3.1415926535897931" />
+
+
+  <xacro:macro name="mako_3d_visual" params="name color">
+     <visual>
+       <geometry>
+          <mesh filename="package://iiwa7_description/meshes/mako_3d/visual/mako_3d_link/${name}.stl" />
+       </geometry>
+       <material name="${color}"/>
+     </visual>
+  </xacro:macro>
+
+  <xacro:macro name="mako_3d_collision" params="name color">
+     <collision>
+       <geometry>
+          <mesh filename="package://iiwa7_description/meshes/mako_3d/collision/mako_3d_link/${name}.stl" />
+       </geometry>
+       <material name="${color}"/>
+     </collision>
+  </xacro:macro>
+
+  <xacro:macro name="mako_3d" params="parent_link name *origin">
+    <joint name="${name}_fixed_base_joint" type="fixed">
+       <insert_block name="origin"/>
+       <child link="${name}_link" />
+       <parent link="${parent_link}"/>
+    </joint>
+
+    <link name="${name}_link">
+      <xacro:mako_3d_visual name="back" color="Grey"/>
+      <xacro:mako_3d_visual name="bottom" color="Light Grey"/>
+      <xacro:mako_3d_visual name="cover" color="Red"/>
+      <xacro:mako_3d_visual name="ethernet" color="Light Grey"/>
+      <xacro:mako_3d_visual name="front" color="Light Grey"/>
+      <xacro:mako_3d_visual name="lens" color="Light Grey"/>
+      <xacro:mako_3d_visual name="power" color="Light Grey"/>
+      <xacro:mako_3d_collision name="case" color="Light Grey"/>
+      <xacro:mako_3d_collision name="lens" color="Light Grey"/>
+
+      <inertial>
+        <!-- Estimated from reference sheet -->
+        <mass value="0.08" />
+        <inertia 
+         ixx="1.0" ixy="0.0" ixz="0.0" 
+         iyy="1.0" iyz="0.0" 
+         izz="1.0" />
+      </inertial>
+    </link>
+    
+    <!--Extensions -->
+    <xacro:mako_3d_gazebo name="${name}" rate="10.0"/>
+  
+  </xacro:macro>
+
+</robot>

@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+
+<robot name="mako_3d" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!-- Parameters are for mako g-125 -->
+
+  <xacro:macro name="mako_3d_gazebo" params="name rate">
+    <joint name="${name}_gazebo_optical_joint" type="fixed">
+       <child link="${name}_gazebo_optical_link" />
+       <parent link="${name}_link"/>
+       <origin xyz="0 0 0" rpy="0 ${-0.5 * pi} ${-0.5 * pi}"/>
+    </joint>
+
+    <link name="${name}_gazebo_optical_link"/>
+
+    <gazebo reference="${name}_link">
+      <selfCollide>true</selfCollide>
+      <material>Gazebo/DarkGrey</material>
+      <mu1>0.2</mu1>
+      <mu2>0.2</mu2>
+    </gazebo>
+
+    <gazebo reference="${name}_gazebo_optical_link">
+      <sensor type="camera" name="${name}">
+        <update_rate>${rate}</update_rate>
+        <camera name="${name}">
+          <horizontal_fov>1.0471975512</horizontal_fov>
+          <image>
+            <width>1292</width>
+            <height>964</height>
+            <format>R8G8B8</format>
+          </image>
+        </camera>
+        <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>${rate}</updateRate>
+          <cameraName>${name}</cameraName>
+          <imageTopicName>image</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>${name}_gazebo_optical_link</frameName>
+        </plugin>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+  
+  <xacro:macro name="mako_depth_camera_gazebo" params="name rate parent_link">
+    <joint name="${name}_gazebo_optical_joint" type="fixed">
+       <child link="${name}_gazebo_optical_link" />
+       <parent link="${parent_link}"/>
+       <origin xyz="0 0 0" rpy="0 ${-0.5 * pi} ${0.5 * pi}"/>
+    </joint>
+
+    <link name="${name}_gazebo_optical_link"/>
+
+    <gazebo reference="${name}_gazebo_optical_link">
+      <sensor type="depth" name="${name}">
+        <update_rate>${rate}</update_rate>
+        <camera name="${name}">
+          <horizontal_fov>1.047198</horizontal_fov>
+          <image>
+            <width>1292</width>
+            <height>964</height>
+          </image>
+        </camera>
+        <plugin name="depth_camera_controller" filename="libgazebo_ros_depth_camera.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>${rate}</updateRate>
+          <cameraName>${name}</cameraName>
+          <imageTopicName>color</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <pointCloudTopicName>point_cloud</pointCloudTopicName>
+          <depthImageTopicName>depth</depthImageTopicName>
+          <depthImageCameraInfoTopicName>camera_info</depthImageCameraInfoTopicName>
+          <pointCloudCutoff>0.4</pointCloudCutoff>
+          <frameName>${parent_link}</frameName>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+  </xacro:macro>
+	
+</robot>
+

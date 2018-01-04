@@ -1,0 +1,242 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller" 
+xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Import all Gazebo-customization elements, including Gazebo colors -->
+  <xacro:include filename="$(find logimat_description)/urdf/robot/omnirob/omnirob.gazebo.xacro" />
+  <!-- Import Transmissions -->
+  <xacro:include filename="$(find logimat_description)/urdf/robot/omnirob/omnirob.transmission.xacro" />
+
+  <property name="max_force" value="1.0"/>
+  <property name="max_torque" value="1.0"/>
+  <property name="max_lin_velocity" value="1.0"/>
+  <property name="max_rot_velocity" value="1.0"/>
+  <property name="min_position" value="-100.0"/>
+  <property name="max_position" value="100.0"/>
+
+  <xacro:macro name="omnirob_visual" params="index color">
+     <visual>
+       <origin xyz="0.0 0.0 0.125" rpy="0 0 0"/>
+       <geometry>
+          <mesh filename="package://logimat_description/meshes/robot/omnirob/${index}.stl" />
+       </geometry>
+       <material name="${color}"/>
+     </visual>
+  </xacro:macro>
+
+  <xacro:macro name="omnirob" params="parent_link name hardware_interface">
+    <joint name="${name}_fixed_base_joint" type="fixed">
+       <child link="${name}_virtual_link_0" />
+       <parent link="${parent_link}"/>
+       <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+    </joint>
+
+    <link name="${name}_virtual_link_0">
+      <visual>
+        <origin xyz="0 0 0.5" rpy="0 0 0" />
+        <geometry>
+          <box size="0.001 0.001 0.001" />
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0.1" rpy="0 0 0" />
+        <geometry>
+          <box size="0.001 0.001 0.001" />
+        </geometry>
+      </collision>
+
+      <inertial>
+        <mass value="0.001" />
+        <inertia
+          ixx="1.0" ixy="0.0" ixz="0.0"
+          iyy="1.0" iyz="0.0"
+          izz="1.0" />
+        </inertial>
+    </link>
+    
+    <joint name="${name}_joint_x" type="prismatic">
+       <origin xyz="3.5 0 0" rpy="0 0 0" />
+       <axis xyz="1 0 0"/>
+       <limit lower="${min_position}" upper="${max_position}" effort="${max_force}" velocity="${max_lin_velocity}"/>
+       <parent link="${name}_virtual_link_0"/>
+       <child link="${name}_virtual_link_1" />
+    </joint>    
+
+    <link name="${name}_virtual_link_1">
+      <visual>
+        <origin xyz="0 0 0.1" rpy="0 0 0" />
+        <geometry>
+          <box size="0.001 0.001 0.001" />
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0.1" rpy="0 0 0" />
+        <geometry>
+          <box size="0.001 0.001 0.001" />
+        </geometry>
+      </collision>
+
+      <inertial>
+        <mass value="0.001" />
+        <inertia
+          ixx="1.0" ixy="0.0" ixz="0.0"
+          iyy="1.0" iyz="0.0"
+          izz="1.0" />
+        </inertial>
+    </link>
+
+    <joint name="${name}_joint_y" type="prismatic">
+       <origin xyz="0 0 0" rpy="0 0 0" />
+       <axis xyz="0 1 0"/>
+       <limit lower="${min_position}" upper="${max_position}" effort="${max_force}" velocity="${max_lin_velocity}"/>
+       <parent link="${name}_virtual_link_1"/>
+       <child link="${name}_virtual_link_2" />
+    </joint>    
+
+    <link name="${name}_virtual_link_2">
+      <visual>
+        <origin xyz="0 0 0.1" rpy="0 0 0" />
+        <geometry>
+          <box size="0.001 0.001 0.001" />
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0.1" rpy="0 0 0" />
+        <geometry>
+          <box size="0.001 0.001 0.001" />
+        </geometry>
+      </collision>
+
+      <inertial>
+        <mass value="0.001" />
+        <inertia
+          ixx="1.0" ixy="0.0" ixz="0.0"
+          iyy="1.0" iyz="0.0"
+          izz="1.0" />
+      </inertial>
+    </link>
+
+    <joint name="${name}_joint_theta" type="continuous">
+       <origin xyz="0 0 0" rpy="0 0 0" />
+       <axis xyz="0 0 1"/>
+       <limit effort="${max_torque}" velocity="${max_rot_velocity}" upper="${-1.0 * pi}" lower="${pi}"/>
+       <parent link="${name}_virtual_link_2"/>
+       <child link="${name}_link" />
+    </joint> 
+    
+<!--
+    <joint name="${name}_fixed_base_joint" type="fixed">
+       <child link="${name}_link" />
+       <parent link="${parent_link}"/>
+        <origin xyz="0.5 1.7 0.0" rpy="0 0 0" />
+    </joint>
+    
+    <link name="${name}_link">
+      <visual>
+        <origin xyz="0 0 0.48" rpy="0 0 0" />
+        <geometry>
+          <box size="1.1 0.74 0.96" />
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0.48" rpy="0 0 0" />
+        <geometry>
+          <box size="1.1 0.74 0.96" />
+        </geometry>
+      </collision>
+
+      <inertial>
+        <mass value="40" />
+        <inertia
+          ixx="1.0" ixy="0.0" ixz="0.0"
+          iyy="1.0" iyz="0.0"
+          izz="1.0" />
+      </inertial>
+  </link>   
+-->
+
+    <link name="${name}_link">
+
+       <xacro:omnirob_visual index="1" color="Grey"/>
+       <xacro:omnirob_visual index="2" color="Orange"/>
+       <xacro:omnirob_visual index="3" color="Orange"/>
+       <xacro:omnirob_visual index="4" color="Orange"/>
+       <xacro:omnirob_visual index="5" color="Orange"/>
+       <xacro:omnirob_visual index="6" color="Orange"/>
+       <xacro:omnirob_visual index="7" color="Orange"/>
+       <xacro:omnirob_visual index="8" color="Orange"/>
+       <xacro:omnirob_visual index="9" color="Orange"/>
+       <xacro:omnirob_visual index="10" color="Orange"/>
+       <xacro:omnirob_visual index="11" color="Orange"/>
+       <xacro:omnirob_visual index="12" color="Orange"/>
+       <xacro:omnirob_visual index="13" color="Orange"/>
+       <xacro:omnirob_visual index="14" color="Orange"/>
+       <xacro:omnirob_visual index="15" color="Orange"/>
+       <xacro:omnirob_visual index="16" color="Orange"/>
+       <xacro:omnirob_visual index="17" color="Orange"/>
+       <xacro:omnirob_visual index="18" color="Orange"/>
+       <xacro:omnirob_visual index="19" color="Orange"/>
+
+<!--
+       <visual>
+          <geometry>
+              <mesh filename="package://logimat_description/meshes/robot/omnirob/omnirob_collision.stl" />
+          </geometry>
+         <material name="Orange"/>
+       </visual>
+-->
+
+       <collision>
+          <origin xyz="0 0 0.001" rpy="0 0 0" />
+          <geometry>
+              <mesh filename="package://logimat_description/meshes/robot/omnirob/omnirob_collision.stl" />
+          </geometry>
+         <material name="Orange"/>
+       </collision>
+
+      <inertial>
+        <mass value="40.0" />
+        <inertia
+          ixx="1.0" ixy="0.0" ixz="0.0"
+          iyy="1.0" iyz="0.0"
+          izz="1.0" />
+      </inertial>
+    </link>
+
+    <joint name="${name}_left_iiwa_mount_joint" type="fixed">
+       <origin xyz="0.370 0.160 0.965" rpy="0 0 1.5707963267948966"/>
+       <parent link="${name}_link"/>
+       <child link="${name}_left_iiwa_mount_link" />
+    </joint>
+
+    <link name="${name}_left_iiwa_mount_link"/>
+
+    <joint name="${name}_right_iiwa_mount_joint" type="fixed">
+       <origin xyz="0.370 -0.160 0.965" rpy="0 0 -1.5707963267948966"/>
+       <parent link="${name}_link"/>
+       <child link="${name}_right_iiwa_mount_link" />
+    </joint>
+
+    <link name="${name}_right_iiwa_mount_link"/>
+
+    <joint name="${name}_mast_mount_joint" type="fixed">
+       <origin xyz="-0.500 -0.270 0.965" rpy="0 0 0"/>
+       <parent link="${name}_link"/>
+       <child link="${name}_link_mast_mount" />
+    </joint>
+
+    <link name="${name}_link_mast_mount"/>
+
+    <!--Extensions -->
+    <xacro:omnirob_gazebo name="${name}" />
+    <xacro:omnirob_transmission name="${name}" hardware_interface="${hardware_interface}"/>
+
+  </xacro:macro>
+
+</robot>

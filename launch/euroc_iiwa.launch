@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="paused" default="true"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="throttled" default="false"/>
+
+  
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+<!--
+    <arg name="world_name" default="$(find logimat_description)/worlds/croinspect.world"/>    
+-->
+    <arg name="paused" value="true"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    
+  </include>
+
+  <!-- robot description and controllers to param -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find iiwa)/robots/iiwa.urdf.xacro'" />  
+
+  <rosparam file="$(find iiwa)/config/iiwa_control.yaml" command="load"/>
+
+
+  <!-- publish frames to tf -->
+  <node name="robopartner_robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>
+  
+  <!-- spawn the robot -->
+  <node name="spawn_robot_model" pkg="gazebo_ros" type="spawn_model" args=" 
+    -x 0.0 -y -0.0 -z 0.0 -R 0 -P 0 -Y 0 -unpause -urdf -param robot_description  -model iiwa
+    -J lbr_iiwa_joint_1 0.065 -J lbr_iiwa_joint_2 0.628 -J lbr_iiwa_joint_3 -0.19 -J lbr_iiwa_joint_4 -1.37 -J lbr_iiwa_joint_5 -1.5 -J lbr_iiwa_joint_6 -1.11 -J lbr_iiwa_joint_7 0.882
+     " 
+    respawn="false" output="screen" />  
+
+      <!-- Controllers that come up started -->
+      
+  <node name="default_controllers_spawner" pkg="controller_manager" type="spawner"  respawn="true" output="screen" 
+    args="lbr_iiwa_joint_trajectory_position_controller joint_state_controller" />
+  
+
+
+ </launch>

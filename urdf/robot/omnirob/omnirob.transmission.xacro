@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<robot name="lbr_iiwa" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="omnirob_transmission" params="name hardware_interface">
+
+    <transmission name="${name}_tran_x">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${name}_joint_x">
+	<hardwareInterface>${hardware_interface}</hardwareInterface>
+      </joint>
+      <actuator name="${name}_motor_x">
+	<hardwareInterface>${hardware_interface}</hardwareInterface>
+	<mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <transmission name="${name}_tran_y">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${name}_joint_y">
+	<hardwareInterface>${hardware_interface}</hardwareInterface>
+      </joint>
+      <actuator name="${name}_motor_y">
+	<hardwareInterface>${hardware_interface}</hardwareInterface>
+	<mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <transmission name="${name}_tran_theta">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${name}_joint_theta">
+	<hardwareInterface>${hardware_interface}</hardwareInterface>
+      </joint>
+      <actuator name="${name}_motor_theta">
+	<hardwareInterface>${hardware_interface}</hardwareInterface>
+	<mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+  </xacro:macro>
+
+</robot>
+
+
+

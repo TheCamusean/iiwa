@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="gripper_gazebo_v0" params="name">
+
+    <gazebo reference="${name}_1_link">
+			<material>Gazebo/Grey</material>
+			<turnGravityOff>false</turnGravityOff>
+			<self_collide>false</self_collide>			
+			<mu1>1.0</mu1>
+      <mu2>1.0</mu2>
+      <kp>1.0</kp>
+		</gazebo>
+		
+		<gazebo reference="${name}_2_link">
+			<material>Gazebo/Grey</material>
+			<turnGravityOff>false</turnGravityOff>
+			<self_collide>false</self_collide>
+			<mu1>1.0</mu1>
+      <mu2>1.0</mu2>
+      <kp>1.0</kp>
+		</gazebo>
+	
+		<gazebo>
+			<gripper name="gripper">
+				<grasp_check>
+					<attach_steps>5</attach_steps>
+					<detach_steps>10</detach_steps>
+					<min_contact_count>2</min_contact_count>
+				</grasp_check>
+				<gripper_link>${name}_1_link</gripper_link>
+				<gripper_link>${name}_2_link</gripper_link>
+				<palm_link>hercules_7_link</palm_link>
+			</gripper>
+		</gazebo>
+	
+  </xacro:macro>
+
+</robot>

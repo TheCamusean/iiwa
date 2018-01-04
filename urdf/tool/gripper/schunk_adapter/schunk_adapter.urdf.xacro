@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller" 
+xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Import all Gazebo-customization elements, including Gazebo colors -->
+  <xacro:include filename="$(find iiwa7_description)/urdf/schunk_adapter/schunk_adapter.gazebo.xacro" />
+
+  <xacro:macro name="schunk_adapter_visual" params="name material">
+     <visual>
+       <geometry>
+          <mesh filename="package://iiwa7_description/meshes/schunk_adapter/visual/link_adapter/${name}.stl" />
+       </geometry>
+       <material name="${material}"/>
+     </visual>
+  </xacro:macro>
+
+  <xacro:macro name="schunk_adapter_collision" params="name material">
+     <collision>
+       <geometry>
+          <mesh filename="package://iiwa7_description/meshes/schunk_adapter/collision/link_adapter/${name}.stl" />
+       </geometry>
+       <material name="${material}"/>
+     </collision>
+  </xacro:macro>
+
+  <xacro:macro name="schunk_adapter" params="parent_link name *origin">
+    <joint name="${name}_fixed_base_joint" type="fixed">
+       <insert_block name="origin"/>
+       <child link="${name}_link" />
+       <parent link="${parent_link}"/>
+    </joint>
+
+    <link name="${name}_link">
+      <xacro:schunk_adapter_visual name="adapter_schunk_side" material="Grey"/>  
+      <xacro:schunk_adapter_visual name="adapter_robot_side" material="Grey"/>  
+      <xacro:schunk_adapter_visual name="union_nut" material="Black"/>
+      <xacro:schunk_adapter_collision name="adapter" material="Grey"/>  
+
+      <inertial>
+        <!-- Measured mass value -->
+        <mass value="0.115" />
+        <inertia 
+         ixx="1.0" ixy="0.0" ixz="0.0" 
+         iyy="1.0" iyz="0.0" 
+         izz="1.0" />
+      </inertial>
+    </link>
+    
+    <!--Extensions -->
+    <xacro:schunk_adapter_gazebo name="${name}"/>
+
+  </xacro:macro>
+
+</robot>

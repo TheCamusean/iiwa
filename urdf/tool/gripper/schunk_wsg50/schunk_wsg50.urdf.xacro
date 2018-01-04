@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller" 
+xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Import all Gazebo-customization elements, including Gazebo colors -->
+  <xacro:include filename="$(find iiwa7_description)/urdf/schunk_wsg50/schunk_wsg50.gazebo.xacro" />
+  <!-- Import Transmissions -->
+  <xacro:include filename="$(find iiwa7_description)/urdf/schunk_wsg50/schunk_wsg50.transmission.xacro" />
+
+  <xacro:property name="pi" value="3.1415926535897931" />
+  <xacro:property name="jaw_min_position" value="0.0035"/>
+  <xacro:property name="jaw_max_position" value="0.054"/>
+  <xacro:property name="jaw_max_force" value="59.9"/>
+  <xacro:property name="jaw_max_velocity" value="0.042"/>
+
+  <xacro:property name="wsg50_base_link_height" value="0.0725"/>
+
+  <xacro:macro name="schunk_wsg50_jaw_visual" params="index">
+      <visual>
+        <geometry>
+          <mesh filename="package://iiwa7_description/meshes/schunk_wsg50/schunk_wsg50_jaw/schunk_wsg50_jaw_${index}.stl" />
+        </geometry>
+        <material name="Grey"/>
+      </visual>
+  </xacro:macro>
+
+  <xacro:macro name="schunk_wsg50_jaw_collision" params="index">
+      <collision>
+        <geometry>
+          <mesh filename="package://iiwa7_description/meshes/schunk_wsg50/schunk_wsg50_jaw/schunk_wsg50_jaw_${index}.stl" />
+        </geometry>
+        <material name="Grey"/>
+      </collision>
+  </xacro:macro>
+
+  <xacro:macro name="schunk_wsg50_jaw" params="link_name">
+    <link name="${link_name}">
+        <xacro:schunk_wsg50_jaw_visual index="1" />
+        <xacro:schunk_wsg50_jaw_visual index="2" />
+        <xacro:schunk_wsg50_jaw_visual index="3" />
+        <xacro:schunk_wsg50_jaw_collision index="1" />
+        <xacro:schunk_wsg50_jaw_collision index="2" />
+        <xacro:schunk_wsg50_jaw_collision index="3" />
+
+        <inertial>
+        <!-- Estimated from reference sheet -->
+          <mass value="0.05" /> 
+          <inertia
+            ixx="1.0" ixy="0.0" ixz="0.0"
+            iyy="1.0" iyz="0.0"
+            izz="1.0" />
+        </inertial>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="schunk_wsg50" params="parent_link name hardware_interface *origin">
+    <joint name="${name}_fixed_base_joint" type="fixed">
+       <insert_block name="origin"/>
+       <child link="${name}_link_base" />
+       <parent link="${parent_link}"/>
+    </joint>
+
+    <link name="${name}_link_base">
+      <visual>
+        <geometry>
+          <mesh filename="package://iiwa7_description/meshes/schunk_wsg50/schunk_wsg50_base/schung_wsg50_base.stl" />
+        </geometry>
+        <material name="Light Grey"/>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://iiwa7_description/meshes/schunk_wsg50/schunk_wsg50_base/schung_wsg50_base.stl" />
+        </geometry>
+        <material name="Light Grey"/>
+      </collision>
+      <inertial>
+        <!-- Estimated from reference sheet -->
+        <mass value="1.1" />
+        <inertia 
+         ixx="1.0" ixy="0.0" ixz="0.0" 
+         iyy="1.0" iyz="0.0" 
+         izz="1.0" />
+      </inertial>
+    </link>
+    
+    <joint name="${name}_joint_right_jaw" type="prismatic">
+       <origin xyz="0 0 ${wsg50_base_link_height}" rpy="0 0 0" />
+       <axis xyz="1 0 0"/>
+       <limit lower="${jaw_min_position}" upper="${jaw_max_position}" effort="${jaw_max_force}" velocity="${jaw_max_velocity}"/>
+       <parent link="${name}_link_base"/>
+       <child link="${name}_link_right_jaw" />
+    </joint>    
+
+    <xacro:schunk_wsg50_jaw link_name="${name}_link_right_jaw"/>
+
+    <joint name="${name}_joint_left_jaw" type="prismatic">
+       <origin xyz="0 0 ${wsg50_base_link_height}" rpy="0 0 ${pi}" />
+       <axis xyz="1 0 0"/>
+       <limit lower="${jaw_min_position}" upper="${jaw_max_position}" effort="${jaw_max_force}" velocity="${jaw_max_velocity}"/>
+       <parent link="${name}_link_base"/>
+       <child link="${name}_link_left_jaw" />
+    </joint>    
+
+    <xacro:schunk_wsg50_jaw link_name="${name}_link_left_jaw"/>
+
+    <joint name="${name}_palm_joint" type="fixed">
+       <origin xyz="0.0 0.0 ${wsg50_base_link_height}" rpy="0 0 0"/>
+       <parent link="${name}_link_base"/>
+       <child link="${name}_link_palm" />
+    </joint>
+
+    <link name="${name}_link_palm"/>
+
+    <!--Extensions -->
+    <xacro:schunk_wsg50_gazebo name="${name}" />
+    <xacro:schunk_wsg50_transmission name="${name}" hardware_interface="${hardware_interface}"/>
+
+  </xacro:macro>
+
+</robot>

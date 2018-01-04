@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+name="euroc_iiwa" >
+
+  <xacro:property name="pi" value="3.1415926535897931" />
+
+  <xacro:property name="iiwa_flange_height" value="0.045"/>
+  <xacro:property name="iiwa_wsg50_connector_height" value="0.018"/>
+
+
+  <xacro:property name="interface" value="hardware_interface/PositionJointInterface"/>
+
+  <xacro:property name="kinect_mast_offset" value="0.03"/>
+
+	<property name="cal_kinect_x" value="0.0" />
+	<property name="cal_kinect_y" value="0.0" />
+	<property name="cal_kinect_z" value="0.0" />
+	<property name="cal_kinect_roll" value="0.0" />
+	<property name="cal_kinect_pitch" value="0.0" />
+	<property name="cal_kinect_yaw" value="0.0" />
+
+  <!-- Import Rviz colors -->
+  <xacro:include filename="$(find iiwa)/urdf/materials.urdf.xacro" />
+
+  <!-- The following included files set up definitions of parts of the robot body -->
+  <!-- Import Gazebo plugins -->
+  <xacro:include filename="$(find iiwa)/gazebo/gazebo.urdf.xacro"/>
+
+  <!-- Import urdf macros -->
+
+  <!-- iiwa -->
+  <xacro:include filename="$(find iiwa)/urdf/robot/iiwa/lbr_iiwa.xacro"/>
+   <!-- tool -->
+<!--
+  <xacro:include filename="$(find logimat_description)/urdf/tool/roll_scan.urdf.xacro"/>
+-->
+
+  <!-- Construct the miiwa from parts -->
+
+  <!-- Base frame to anchor the robot in the world -->
+   <link name="world"/>
+
+  <!-- lbr iiwa manipulator -->
+  <xacro:lbr_iiwa name="lbr_iiwa" parent="world" hardware_interface="${interface}">
+		<origin xyz="0 0 0" rpy="0.0 0.0 0.0"/>
+  </xacro:lbr_iiwa>
+
+  <!-- tool -->
+<!--
+  <xacro:roll_scan_v0 name="roll_scan" parent="lbr_iiwa_link_7">
+		<origin xyz="0 0 ${iiwa_flange_height}" rpy="0.0 0.0 0.0"/>
+  </xacro:roll_scan_v0>
+-->
+</robot>

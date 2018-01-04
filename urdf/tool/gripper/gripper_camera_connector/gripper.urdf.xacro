@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  
+   <xacro:include filename="$(find hercules_description)/urdf/gripper/gripper.transmission.xacro" />
+    <xacro:include filename="$(find hercules_description)/urdf/gripper/gripper.gazebo.xacro" />
+    
+	<xacro:macro name="gripper_v0"  params="name parent *origin">
+		
+    <joint name="${name}_1_joint" type="prismatic">
+			<insert_block name="origin" />
+			<parent link="${parent}"/> 
+			<child link="${name}_1_link" />
+			<axis xyz="0 0 1" />
+			<limit effort="1000.0" velocity="0.03" lower="0.0" upper="0.1"/>
+		</joint>
+		
+		<link name="${name}_1_link">
+			<inertial>
+				<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+				<mass value="37.8" />
+				<inertia ixx="0.3" ixy="0.0" ixz="0.0" iyy="2.85" iyz="0.0" izz="3.12" />
+			</inertial>
+			<visual>
+				<origin xyz="0.0 -0.15 0.0" rpy="0.0 0.0 0.0" />
+				<geometry>
+					<box size="0.95 0.3 0.05"/>
+				</geometry>
+        <material name="Grey"/>
+			</visual>
+			<collision>
+				<origin xyz="0.0 -0.15 0.0" rpy="0 0.0 0" />
+				<geometry>
+					<box size="0.95 0.3 0.05"/>
+				</geometry>
+			</collision>
+		</link>
+		
+    <joint name="${name}_2_joint" type="prismatic">
+			<origin xyz="0.0 -0.135 -0.3" rpy="1.57 0.0 0.0" />			
+			<parent link="${parent}" />
+			<child link="${name}_2_link" />
+		  <axis xyz="0 0 1" />
+			<limit effort="1000.0" velocity="0.03" lower="-0.1" upper="0.0"/>
+		</joint>
+		
+		<link name="${name}_2_link">
+			<inertial>
+				<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+				<mass value="37.8" />
+				<inertia ixx="0.3" ixy="0.0" ixz="0.0" iyy="2.85" iyz="0.0" izz="3.12" />
+			</inertial>
+			<visual>
+				<origin xyz="0.0 -0.15 0.0" rpy="0.0 0.0 0.0" />
+				<geometry>
+					<box size="0.95 0.3 0.05"/>
+				</geometry>
+        <material name="Grey"/>
+			</visual>
+
+			<collision>
+				<origin xyz="0.0 -0.15 0.0" rpy="0 0.0 0" />
+				<geometry>
+					<box size="0.95 0.3 0.05"/>
+				</geometry>
+			</collision>
+
+		</link>
+	
+		<xacro:gripper_transmission_v0 name="${name}" />
+    <xacro:gripper_gazebo_v0 name="${name}" />
+    	
+  </xacro:macro>
+</robot>

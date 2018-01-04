@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+name="mako_3d" >
+
+<!-- The following included files set up definitions of parts of the robot body -->
+<!-- schunk wsg50 -->
+<xacro:include filename="$(find iiwa7_description)/urdf/mako_3d/mako_3d.urdf.xacro" />
+<xacro:include filename="$(find iiwa7_description)/urdf/materials.xacro" />
+
+<link name="base_link"/>
+<xacro:mako_3d name="mako_3d" parent_link="base_link" hardware_interface="none">
+  <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+</xacro:mako_3d>
+
+</robot>

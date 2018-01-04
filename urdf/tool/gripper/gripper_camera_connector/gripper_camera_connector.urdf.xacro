@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller" 
+xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="gripper_camera_connector_box" params="x y z material *origin">
+      <visual>
+        <insert_block name="origin"/>
+        <geometry>
+          <box size="${x} ${y} ${z}"/>
+        </geometry>
+        <material name="${material}"/>
+      </visual>
+      <collision>
+        <insert_block name="origin"/>
+        <geometry>
+          <box size="${x} ${y} ${z}"/>
+        </geometry>
+        <material name="${material}"/>
+      </collision>
+   </xacro:macro>
+
+  <xacro:macro name="gripper_camera_connector" params="parent_link name *origin">
+    <joint name="${name}_fixed_base_joint" type="fixed">
+       <insert_block name="origin"/>
+       <child link="${name}_link" />
+       <parent link="${parent_link}"/>
+    </joint>
+
+    <link name="${name}_link">
+			
+			<visual>
+        <origin xyz="0 0.013 0.034" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.08 0.025 0.068"/>
+        </geometry>
+        <material name="Grey"/>
+      </visual>
+      <collision>
+        <insert_block name="origin"/>
+        <geometry>
+          <box size="0.08 0.025 0.068"/>
+        </geometry>
+        <material name="Grey"/>
+      </collision>
+      
+      <!--inertial>
+        <estimated from geometry and density of alumium>
+        <origin xyz="0 0 ${0.5 * mast_height}" rpy="0 0 0" />
+        <mass value="6.3" />
+        <inertia
+          ixx="1.0" ixy="0.0" ixz="0.0"
+          iyy="1.0" iyz="0.0"
+          izz="1.0" />
+        </inertial-->
+    </link>
+
+    <gazebo reference="${name}_link">
+      <material>Gazebo/Grey</material>
+      <mu1>0.2</mu1>
+      <mu2>0.2</mu2>
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>
