@@ -1,0 +1,24 @@
+#Bin Picking action message
+
+# goal
+
+# string indicating pice type to pick, for example "class1_raw".
+string piece_type
+
+# number of the container that has the part to pick from 1 to 3.
+int32 container
+
+---
+# result
+
+# flag indicating success in the operation
+bool success
+
+# number of successfully extracted parts, ranging from 1 to 4. If no part can be extracted -> success = false, numExtractedParts = 0
+int32  num_extracted_parts
+
+---
+# Feedback
+
+int32 error_code 
+string error_string

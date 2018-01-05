@@ -1,0 +1,5 @@
+int32 container
+---
+bool capture_error
+bool piece_error
+geometry_msgs/Pose piece_pose
