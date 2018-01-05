@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+  <rosparam file="$(find iiwa)/config/iiwa_config.yaml" command="load" />	
+  <node name="state_machine_iiwa" pkg="iiwa" type="state_machine_iiwa" output="screen">
+  </node>
+</launch>
