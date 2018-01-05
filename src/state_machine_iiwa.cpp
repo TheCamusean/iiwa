@@ -8,6 +8,17 @@
 #include <actionlib/server/simple_action_server.h>
 #include <iiwa/BinPickingAction.h>
 
+enum StateMachine
+{
+	IDLE,
+	//CAM_CONTAINER_POSE,
+	PICKING,
+	GO_TO_LEAVE_PLACE,
+	LEAVE,
+	BACK_HOME,
+	
+};
+
 class BinPickingAction
 {
 protected:
@@ -19,13 +30,31 @@ protected:
   iiwa::BinPickingFeedback feedback_;
   iiwa::BinPickingResult result_;
 
+private:
+
+	ArmManager* arm_manager_;
+	StateMachine state_;
+	StateMachineIiwaHelper* state_machine_iiwa_helper_;
+	bool initialization_done_;
+	std::mutex state_mutex_;
+
+
+
 public:
 
   BinPickingAction(std::string name) :
     as_(nh_, name, boost::bind(&BinPickingAction::executeCB, this, _1), false),
     action_name_(name)
   {
-    as_.start();
+
+  	arm_manager_ = new ArmManager("arm", "lbr_iiwa_joint_trajectory_position_controller","arm");
+  	arm_manager_->initManager();
+  	state_machine_iiwa_helper_ = new StateMachineIiwaHelper(arm_manager_);
+	std::unique_lock<std::mutex> lock(state_mutex_);
+  	initialization_done_ = false;
+  	state_ = IDLE;
+	lock.unlock();
+	as_.start();
   }
 
   ~BinPickingAction(void)
@@ -43,20 +72,6 @@ public:
     feedback_.error_string = "hola";
     as_.publishFeedback(feedback_);
 
-
-    // start executing the action
-/*    for(int i=1; i<=goal->piece_type; i++)
-    {
-      // check that preempt has not been requested by the client
-      if (as_.isPreemptRequested() || !ros::ok())
-      {
-        ROS_INFO("%s: Preempted", action_name_.c_str());
-        // set the action state to preempted
-        as_.setPreempted();
-        success = false;
-        break;
-      }*/
-      // this sleep is not necessary, the sequence is computed at 1 Hz for demonstration purposes
       r.sleep();
     
 
@@ -73,27 +88,7 @@ public:
 };	
 
 
-/*enum StateMachine
-{
-	IDLE,
-	PICKING,
-	GO_TO_LEAVE_PLACE,
-	LEAVE,
-	BACK_HOME,
-	
-};
-
-StateMachine state_;
-ArmManager* arm_manager_;
-
-
-StateMachineIiwaHelper* state_machine_iiwa_helper_;
-
-
-std::mutex state_mutex_;
-bool initialization_done_ = false;
-
-bool executeCycle()
+/*bool executeCycle()
 {
 	StateMachine state = state_;
 	switch(state)
@@ -178,30 +173,14 @@ int main(int argc, char **argv)
 {
 
 	ros::init (argc, argv, "binpicking");
-/*	ros::NodeHandle nh;
+	ros::NodeHandle nh;
 	
 	ROS_INFO("Starting program...");
 		
 	ros::AsyncSpinner spinner(0);
 	spinner.start();
 
-	// Init arm_manager & manipulation_helper
-	ROS_INFO("PRE INITIALIZATION ... ");
 
-	arm_manager_ = new ArmManager("arm", "lbr_iiwa_joint_trajectory_position_controller","arm");
-	ROS_INFO("well created -> INITIALIZATION ...");
-	
-	arm_manager_->initManager();
-
-	ROS_INFO("Arm manager initialized");
-	
-	state_machine_iiwa_helper_ = new StateMachineIiwaHelper(arm_manager_);
-
-  	std::unique_lock<std::mutex> lock(state_mutex_);
-  	initialization_done_ = false;
-	state_ = PICKING;
-	lock.unlock();
-*/
 
 	// Initialize the action server
 	BinPickingAction binpicking("binpicking");
