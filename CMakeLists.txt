@@ -32,8 +32,8 @@ add_service_files(
 
 ## Generate actions in the 'action' folder
 add_action_files(
-  FILES
-  BinPicking.action
+  DIRECTORY action
+  FILES BinPicking.action
 )
 
 ## Generate added messages and services with any dependencies listed here
@@ -104,6 +104,6 @@ target_link_libraries(state_machine_iiwa lib_state_machine_iiwa ${catkin_LIBRARI
 add_dependencies(lib_state_machine_iiwa ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 
-add_dependencies(state_machine_iiwa lib_state_machine_iiwa iiwa_generate_messages_cpp)
+add_dependencies(state_machine_iiwa lib_state_machine_iiwa iiwa_generate_messages_cpp ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
 

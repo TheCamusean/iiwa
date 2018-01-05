@@ -73,7 +73,7 @@ public:
 };	
 
 
-enum StateMachine
+/*enum StateMachine
 {
 	IDLE,
 	PICKING,
@@ -171,7 +171,7 @@ void run_task()
 			
 		loop_rate.sleep();
 	}
-}
+}*/
 
 
 int main(int argc, char **argv)
@@ -204,7 +204,7 @@ int main(int argc, char **argv)
 */
 
 	// Initialize the action server
-	BinPickingAction("binpicking");
+	BinPickingAction binpicking("binpicking");
 
 	ros::spin();
 	
