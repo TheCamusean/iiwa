@@ -12,6 +12,8 @@ enum StateMachine
 {
 	IDLE,
 	//CAM_CONTAINER_POSE,
+	//SELECT_TOOL,
+	//CAM_OBJECT_POSE,
 	PICKING,
 	GO_TO_LEAVE_PLACE,
 	LEAVE,
@@ -46,7 +48,6 @@ public:
 	as_(nh_, name, boost::bind(&BinPickingAction::executeCB, this, _1), false),
 	action_name_(name)
 	{
-
 		arm_manager_ = new ArmManager("arm", "lbr_iiwa_joint_trajectory_position_controller","arm");
 		arm_manager_->initManager();
 		state_machine_iiwa_helper_ = new StateMachineIiwaHelper(arm_manager_);

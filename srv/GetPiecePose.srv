@@ -1,4 +1,5 @@
 int32 container
+string piece_type
 ---
 bool capture_error
 bool piece_error
