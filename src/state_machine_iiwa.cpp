@@ -240,18 +240,13 @@ public:
 			{
 				ROS_INFO_THROTTLE(5,"In PICKING state");
 				std::vector<double> xyz(3,0), rpy(3,0);
-
-				Eigen::Quaternion<double> q = Eigen::Quaternion<double>(piece_pose_.orientation.w,piece_pose_.orientation.x,piece_pose_.orientation.y,piece_pose_.orientation.z);
-				Eigen::Matrix3d mat_q(q);
-				//eigen_functionalities::extractEulerAnglesZYX(mat_q, rpy[2], rpy[1], rpy[0]);
-
 				
 				// HERE WE SHOULD ADD THE TRANSFORMATION: FROM CAM TO BASE
 				xyz[0] = 0.5; xyz[1] = 0.0; xyz[2] = 0.3;
 				rpy[0] = 3.1415; rpy[1] = 0; rpy[2] = 0;
 				std::vector<double> pose = {xyz[0],xyz[1],xyz[2],rpy[0],rpy[1],rpy[2]};
 
-				int ret = state_machine_iiwa_helper_->GraspObject(pose);
+				int ret = state_machine_iiwa_helper_->GraspObject(piece_pose_);
 				if(ret == -1)
 				{
 					state_machine_iiwa_helper_->moveSafePose();

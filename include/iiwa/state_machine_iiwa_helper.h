@@ -1,5 +1,6 @@
 #include <arm_manager/arm_manager.h>
 #include "sensor_msgs/JointState.h"
+#include "geometry_msgs/Pose.h"
 
 
 class StateMachineIiwaHelper
@@ -11,6 +12,7 @@ class StateMachineIiwaHelper
 
 
 		//Grasping method
+		int GraspObject(geometry_msgs::Pose pose);
 		int GraspObject(std::vector<double> pose);
 
 		void LeaveObject(int frame);

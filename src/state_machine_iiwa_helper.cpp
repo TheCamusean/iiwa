@@ -3,6 +3,8 @@
 #include <eigen_functionalities.h>
 #include "std_msgs/String.h"
 #include "sensor_msgs/JointState.h"
+#include "geometry_msgs/Pose.h"
+
 
 
 StateMachineIiwaHelper::StateMachineIiwaHelper(ArmManager* arm_manager):
@@ -12,10 +14,6 @@ sync_(false)
 
 	ros::NodeHandle nh("~");
 
-	std::vector<double> rpy(0,3);
-	Eigen::Quaternion<double> q = Eigen::Quaternion<double>(0.5,0.5,0.5,0.5);
-	Eigen::Matrix3d mat_q(q);
-	eigen_functionalities::extractEulerAnglesZYX(mat_q, rpy[2], rpy[1], rpy[0]);
 
 				
 
@@ -40,6 +38,20 @@ void StateMachineIiwaHelper::getDeliveryPlace(int frame, std::vector<double>& xy
 
 }
 
+
+int StateMachineIiwaHelper::GraspObject(geometry_msgs::Pose pose)
+{
+
+				std::vector<double> xyzrpy(6,0);
+				Eigen::Quaternion<double> q = Eigen::Quaternion<double>(pose.orientation.w,pose.orientation.x,pose.orientation.y,pose.orientation.z);
+				Eigen::Matrix3d mat_q(q);
+				eigen_functionalities::extractEulerAnglesZYX(mat_q, xyzrpy[5], xyzrpy[4], xyzrpy[3]);
+				xyzrpy[0] = pose.position.x;
+				xyzrpy[1] = pose.position.y;
+				xyzrpy[2] = pose.position.z;
+
+				return this->GraspObject(xyzrpy);
+}
 int StateMachineIiwaHelper::GraspObject(std::vector<double> pose)// This pose is given in base frame for now, afterwards we should modify to CAM frame
 {	
 	// *** Plan *** //
