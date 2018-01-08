@@ -12,6 +12,13 @@ sync_(false)
 
 	ros::NodeHandle nh("~");
 
+	std::vector<double> rpy(0,3);
+	Eigen::Quaternion<double> q = Eigen::Quaternion<double>(0.5,0.5,0.5,0.5);
+	Eigen::Matrix3d mat_q(q);
+	eigen_functionalities::extractEulerAnglesZYX(mat_q, rpy[2], rpy[1], rpy[0]);
+
+				
+
 }
 
 

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(iiwa)
 
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++11 -pthread -lz)
 
 find_package(catkin REQUIRED COMPONENTS 
 	std_msgs
@@ -61,36 +61,19 @@ catkin_package(
 ## Build ##
 ###########
 
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
-# include_directories(include)
 include_directories( include
   ${catkin_INCLUDE_DIRS}
   ${Eigen_INCLUDE_DIRS}
   ${EIGEN_FUNCTIONALITIES_INCLUDE_DIRS} 
 )
 
-## Declare a cpp library
-# add_library(hercules_description
-#   src/${PROJECT_NAME}/hercules_description.cpp
-# )
 
-## Declare a cpp executable
-# add_executable(hercules_description_node src/hercules_description_node.cpp)
-
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
-# add_dependencies(hercules_description_node hercules_description_generate_messages_cpp)
-
-## Specify libraries to link a library or executable target against
-# target_link_libraries(hercules_description_node
-#   ${catkin_LIBRARIES}
-# )
 
 add_library(lib_state_machine_iiwa src/state_machine_iiwa_helper.cpp)
 target_link_libraries(lib_state_machine_iiwa ${catkin_LIBRARIES})
 
 
+add_executable(camera_server src/getContainerPose.cpp)
 
 add_executable(state_machine_iiwa src/state_machine_iiwa.cpp)
 
@@ -98,12 +81,13 @@ add_executable(state_machine_iiwa src/state_machine_iiwa.cpp)
 
 target_link_libraries(state_machine_iiwa lib_state_machine_iiwa ${catkin_LIBRARIES})
 
+target_link_libraries(camera_server ${catkin_LIBRARIES})
 
 
 
 add_dependencies(lib_state_machine_iiwa ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 
-add_dependencies(state_machine_iiwa lib_state_machine_iiwa iiwa_generate_messages_cpp ${${PROJECT_NAME}_EXPORTED_TARGETS})
+add_dependencies(state_machine_iiwa lib_state_machine_iiwa iiwa_generate_messages_cpp ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} ${catkin_LIBRARIES} )
 
-
+add_dependencies(camera_server iiwa_gencpp)
