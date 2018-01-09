@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+name="euroc_iiwa" >
+
+
+  <xacro:arg name="wing_down" default="true"/>
+  <xacro:arg name="wing_up" default="false"/>
+  <xacro:arg name="miiwa" default="true"/>
+  <xacro:arg name="overhead" default="false"/>
+  <xacro:arg name="safety" default="false"/>
+
+
+  <!-- Import Rviz colors -->
+  <xacro:include filename="$(find iiwa)/urdf/materials.urdf.xacro" />
+
+  <!-- Import urdf macros -->
+
+  <!-- Environment -->
+	<xacro:include filename="$(find iiwa)/urdf/scene/container.urdf.xacro"/>
+
+  <!-- Base frame to anchor the robot in the world -->
+  <link name="world"/>
+
+	<xacro:scene name="euroc_env" parent="world">
+		<origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+	</xacro:scene>
+
+</robot>

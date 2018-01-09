@@ -7,8 +7,8 @@ name="mako_3d" >
 
 <!-- The following included files set up definitions of parts of the robot body -->
 <!-- schunk wsg50 -->
-<xacro:include filename="$(find iiwa7_description)/urdf/mako_3d/mako_3d.urdf.xacro" />
-<xacro:include filename="$(find iiwa7_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find iiwa)/urdf/tool/gripper/mako_3d/mako_3d.urdf.xacro" />
+<xacro:include filename="$(find iiwa)/urdf/tool/gripper/materials.xacro" />
 
 <link name="base_link"/>
 <xacro:mako_3d name="mako_3d" parent_link="base_link" hardware_interface="none">

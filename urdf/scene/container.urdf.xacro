@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="environment">
+  
+  <xacro:arg name="wing_down" default="true"/>
+  <xacro:arg name="wing_up" default="false"/>
+
+  <xacro:macro name="scene" params="name parent *origin">
+		
+  <!-- setup workspace -->
+  <joint name="world_ennv_joint" type="fixed">
+    <parent link="${parent}"/>
+    <child link="env_link"/>
+    <insert_block name="origin"/>
+  </joint>
+		
+	<link name="env_link">
+			
+			<collision>
+				<origin xyz="0.0 0.0 0.0 " rpy="0 0 0.0"/>
+				<geometry>
+					<xacro:if value="$(arg wing_down)">
+						<mesh filename="package://iiwa/meshes/scene/kontainer_400_300_320.stl"/>
+					</xacro:if>
+					<xacro:if value="$(arg wing_up)">
+						<mesh filename="package://iiwa/meshes/scene/kontainer_400_300_320.stl"/>
+					</xacro:if>	
+				</geometry>
+			</collision>
+
+			<visual>
+				<origin xyz="0.0 0.0 0.0 " rpy="0 0 0.0"/>
+				<geometry>
+					<xacro:if value="$(arg wing_down)">
+						<mesh filename="package://iiwa/meshes/scene/kontainer_400_300_320.stl"/>
+					</xacro:if>
+					<xacro:if value="$(arg wing_up)">
+						<mesh filename="package://iiwa/meshes/scene/kontainer_400_300_320.stl"/>
+					</xacro:if>	
+				</geometry>
+			</visual>
+
+			<inertial>
+				<origin xyz="0 0.1 0" rpy="0 0 0"/>
+				<mass value="50"/>
+				<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="10.0" iyz="0.0" izz="10.0"/>
+			</inertial>
+		
+		</link>
+		
+  </xacro:macro>
+  
+ 
+
+</robot>

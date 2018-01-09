@@ -5,7 +5,7 @@ xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
 xmlns:xacro="http://ros.org/wiki/xacro">
 
   <!-- Import all Gazebo-customization elements, including Gazebo colors -->
-  <xacro:include filename="$(find iiwa7_description)/urdf/mako_3d/mako_3d.gazebo.xacro" />
+  <xacro:include filename="$(find iiwa)/urdf/tool/gripper/mako_3d/mako_3d.gazebo.xacro" />
 
   <xacro:property name="pi" value="3.1415926535897931" />
 
@@ -13,7 +13,7 @@ xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="mako_3d_visual" params="name color">
      <visual>
        <geometry>
-          <mesh filename="package://iiwa7_description/meshes/mako_3d/visual/mako_3d_link/${name}.stl" />
+          <mesh filename="package://iiwa/meshes/mako_3d/visual/mako_3d_link/${name}.stl" />
        </geometry>
        <material name="${color}"/>
      </visual>
@@ -22,7 +22,7 @@ xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="mako_3d_collision" params="name color">
      <collision>
        <geometry>
-          <mesh filename="package://iiwa7_description/meshes/mako_3d/collision/mako_3d_link/${name}.stl" />
+          <mesh filename="package://iiwa/meshes/mako_3d/collision/mako_3d_link/${name}.stl" />
        </geometry>
        <material name="${color}"/>
      </collision>

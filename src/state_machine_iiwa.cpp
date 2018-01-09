@@ -185,7 +185,9 @@ public:
 			break;
 
 			case SELECT_TOOL:
-			{
+			{	
+				if(num_extracted_parts < 4){state_machine_iiwa_helper_->setTool("vacuum");}
+				else{state_machine_iiwa_helper_->setTool("gripper");}		
 				state_ = CAM_OBJECT_POSE;
 				feedback_.error_code = 0;
 				feedback_.error_string = "correctly selected the tool";
@@ -244,7 +246,6 @@ public:
 			case PICKING:
 			{
 				ROS_INFO_THROTTLE(5,"In PICKING state");
-
 				int ret = state_machine_iiwa_helper_->GraspObject(piece_pose_);
 				if(ret == -1)
 				{

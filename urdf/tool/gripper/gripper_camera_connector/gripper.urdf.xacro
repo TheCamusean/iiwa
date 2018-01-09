@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
   
-   <xacro:include filename="$(find hercules_description)/urdf/gripper/gripper.transmission.xacro" />
-    <xacro:include filename="$(find hercules_description)/urdf/gripper/gripper.gazebo.xacro" />
+   <xacro:include filename="$(find iiwa)/urdf/tool/gripper/gripper_camera_connector/gripper.transmission.xacro" />
+    <xacro:include filename="$(find iiwa)/urdf/tool/gripper/gripper_camera_connector/gripper.gazebo.xacro" />
     
 	<xacro:macro name="gripper_v0"  params="name parent *origin">
 		

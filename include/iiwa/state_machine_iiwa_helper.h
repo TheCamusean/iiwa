@@ -10,7 +10,8 @@ class StateMachineIiwaHelper
 		StateMachineIiwaHelper(ArmManager* arm_manager);
 		~StateMachineIiwaHelper();
 
-
+		// Tool Selection
+		void setTool(std::string tool_name);
 		//Grasping method
 		int GraspObject(geometry_msgs::Pose pose);
 		int GraspObject(std::vector<double> pose);
@@ -39,6 +40,15 @@ class StateMachineIiwaHelper
 
 		//FollowJointTrajectoryController topic subscriber and callback
 		ros::Subscriber joint_state_sub_;
+
+		//Tool info
+		std::vector<double> gripper_tool_xyz_, gripper_tool_rpy_;
+		std::vector<double> vacuum_tool_xyz_, vacuum_tool_rpy_;
+
+		
+		Eigen::Transform<double, 3, Eigen::Affine> vacuum_tool_pose_H_;
+		Eigen::Transform<double, 3, Eigen::Affine> gripper_tool_pose_H_;
+		
 
 
 

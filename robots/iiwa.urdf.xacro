@@ -34,9 +34,9 @@ name="euroc_iiwa" >
   <!-- iiwa -->
   <xacro:include filename="$(find iiwa)/urdf/robot/iiwa/lbr_iiwa.xacro"/>
    <!-- tool -->
-<!--
-  <xacro:include filename="$(find logimat_description)/urdf/tool/roll_scan.urdf.xacro"/>
--->
+
+  <xacro:include filename="$(find iiwa)/urdf/tool/gripper/gripper_camera_connector/gripper_camera_connector.urdf.xacro"/>
+
 
   <!-- Construct the miiwa from parts -->
 
@@ -48,10 +48,17 @@ name="euroc_iiwa" >
 		<origin xyz="0 0 0" rpy="0.0 0.0 0.0"/>
   </xacro:lbr_iiwa>
 
+
+  <xacro:gripper_camera_connector name="gripper" parent_link="lbr_iiwa_link_7">
+    <origin xyz="0 0 ${iiwa_flange_height}" rpy="0.0 0.0 0.0"/>
+  </xacro:gripper_camera_connector>
+
+
+
   <!-- tool -->
-<!--
+<!-- 
   <xacro:roll_scan_v0 name="roll_scan" parent="lbr_iiwa_link_7">
 		<origin xyz="0 0 ${iiwa_flange_height}" rpy="0.0 0.0 0.0"/>
   </xacro:roll_scan_v0>
--->
+ -->
 </robot>
