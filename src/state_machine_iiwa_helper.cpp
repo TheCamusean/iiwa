@@ -14,6 +14,12 @@ sync_(false)
 
 	ros::NodeHandle nh("~");
 
+	ros::NodeHandle nh_robot("arm");
+
+	nh_robot.getParam("leave_pose", leave_pose);
+	nh_robot.getParam("safety_pose", safety_pose);// The position where the robot will remain when no movement is selected
+
+
 
 				
 
@@ -38,6 +44,18 @@ void StateMachineIiwaHelper::getDeliveryPlace(int frame, std::vector<double>& xy
 
 }
 
+std::vector<double>  StateMachineIiwaHelper::FromPose2Vector(geometry_msgs::Pose pose)
+{
+	std::vector<double> xyzrpy(6,0);
+	Eigen::Quaternion<double> q = Eigen::Quaternion<double>(pose.orientation.w,pose.orientation.x,pose.orientation.y,pose.orientation.z);
+	Eigen::Matrix3d mat_q(q);
+	eigen_functionalities::extractEulerAnglesZYX(mat_q, xyzrpy[5], xyzrpy[4], xyzrpy[3]);
+	xyzrpy[0] = pose.position.x;
+	xyzrpy[1] = pose.position.y;
+	xyzrpy[2] = pose.position.z;
+	return xyzrpy;
+
+}
 
 int StateMachineIiwaHelper::GraspObject(geometry_msgs::Pose pose)
 {
@@ -54,18 +72,15 @@ int StateMachineIiwaHelper::GraspObject(geometry_msgs::Pose pose)
 }
 int StateMachineIiwaHelper::GraspObject(std::vector<double> pose)// This pose is given in base frame for now, afterwards we should modify to CAM frame
 {	
-	// *** Plan *** //
+	// ------------------------------------- PLANIFICATION ------------------------------------- //
 	std::vector<double> jVals(7,0);
-
 	moveit::planning_interface::MoveGroupInterface::Plan planToMiddlePose, planToPrevPose, planToPose, planToBack;
-	
 	std::vector<double> xyz(3,0), rpy(3,0);
-
-	//Phase I: Middle Pose
-	xyz[0] = 0.6; xyz[1] = 0.0; xyz[2] = 0.5;
-	rpy[0] = M_PI; rpy[1] = 0.0; rpy[2] = 0.0; 
-	
-	
+	//Phase I: Container Pose
+	std::vector<double> xyzrpy(6,0);
+	xyzrpy = FromPose2Vector(this->container_pose);
+	xyz[0] = xyzrpy[0]; xyz[1] = xyzrpy[1]; xyz[2] = xyzrpy[2];
+	rpy[0] = xyzrpy[3]; rpy[1] = xyzrpy[4]; rpy[2] = xyzrpy[5]; 
 	if(arm_manager_->planMovementCartesian(xyz,rpy,planToMiddlePose,true)!=PLANNING_SUCCEED)
 	{
 		ROS_INFO("middle box planning fails");
@@ -73,25 +88,20 @@ int StateMachineIiwaHelper::GraspObject(std::vector<double> pose)// This pose is
 	}	
 	int size = (int) planToMiddlePose.trajectory_.joint_trajectory.points.size();
 	jVals = planToMiddlePose.trajectory_.joint_trajectory.points[size-1].positions;
-
 	// Phase II: Go close to the object with a certain orientation
-
 	Eigen::Transform<double, 3, Eigen::Affine> obj_base_H, prev_obj_H, prev_base_H;
-
 	xyz[0] = pose[0]; xyz[1] = pose[1]; xyz[2] = pose[2];
 	rpy[0] = pose[3]; rpy[1] = pose[4]; rpy[2] = pose[5];
 	eigen_functionalities::createHomogeneousMatrix(xyz, rpy, obj_base_H);
-
 	xyz[0] = 0.0; xyz[1] = 0.0; xyz[2] = -0.2;
 	rpy[0] = 0.0; rpy[1] = 0.0; rpy[2] = 0.0;
 	eigen_functionalities::createHomogeneousMatrix(xyz, rpy, prev_obj_H);
-
 	eigen_functionalities::changeFrame(prev_obj_H, obj_base_H, prev_base_H);
 	eigen_functionalities::extractXyzRpy(prev_base_H, xyz, rpy);
 
 	ROS_INFO("Prev: %3.3f %3.3f %3.3f - %3.3f %3.3f %3.3f",xyz[0],xyz[1],xyz[2],rpy[0],rpy[1],rpy[2]);
+	
 	eigen_functionalities::createHomogeneousMatrix(xyz,rpy,prev_base_H);
-
 	if(arm_manager_->planMovementCartesian(jVals,xyz,rpy,planToPrevPose,true)!=PLANNING_SUCCEED)
 	{
 		ROS_INFO("before the object planning fails");
@@ -99,33 +109,25 @@ int StateMachineIiwaHelper::GraspObject(std::vector<double> pose)// This pose is
 	}	
 	size = (int) planToPrevPose.trajectory_.joint_trajectory.points.size();
 	jVals = planToPrevPose.trajectory_.joint_trajectory.points[size-1].positions;
-
 	// Phase III :  GO to object
-
 	eigen_functionalities::extractXyzRpy(obj_base_H, xyz, rpy);
 	if(arm_manager_->planMovementCartesianLin(jVals,xyz,rpy,planToPose,true,1.5,0.050,0.050)!=PLANNING_SUCCEED)
 	{
 		ROS_INFO("plan to object planning fails");
 		return -1;
 	}
-
-	// Eliminating the first element in order to avoid bugs
-
+	// ----------------  Eliminating the first element in order to avoid bugs -------------------------//
 	int c1 = 0;
 	int c2 = 0;
 	if(planToPose.trajectory_.joint_trajectory.points[0].time_from_start == planToPose.trajectory_.joint_trajectory.points[1].time_from_start)
 	{
 		c1 = 1;
 	}
-	ROS_INFO("CheckPoint 1");
 	size = planToPose.trajectory_.joint_trajectory.points.size();
 	if(planToPose.trajectory_.joint_trajectory.points[size-1].time_from_start == planToPose.trajectory_.joint_trajectory.points[size -2].time_from_start)
 	{
 		c2 = 1;
 	}
-	ROS_INFO("CheckPoint 2");
-
-
 	std::vector<trajectory_msgs::JointTrajectoryPoint> points(planToPose.trajectory_.joint_trajectory.points.size()-c1-c2);
 	for(unsigned int i = 0; i<planToPose.trajectory_.joint_trajectory.points.size()-c1-c2; i++)
 	{
@@ -133,30 +135,21 @@ int StateMachineIiwaHelper::GraspObject(std::vector<double> pose)// This pose is
 		points[i] = planToPose.trajectory_.joint_trajectory.points[i+c1];
 
 	}
-	ROS_INFO("CheckPoint 3");
-
 	planToPose.trajectory_.joint_trajectory.points = points;
-
-	// Upto here
-
+	// -------------------------------------------------------------------------//
 	size = (int) planToPose.trajectory_.joint_trajectory.points.size();
 	jVals = planToPose.trajectory_.joint_trajectory.points[size-1].positions;
-	
 	// Phase IV : BAck to Safety Pose
-	xyz[0] = 0.6; xyz[1] = 0.0; xyz[2] = 0.5;
-	rpy[0] = M_PI; rpy[1] = 0.0; rpy[2] = 0.0; 
+	xyz[0] = safety_pose[0]; xyz[1] = safety_pose[1]; xyz[2] = safety_pose[2];
+	rpy[0] = safety_pose[3]; rpy[1] = safety_pose[4]; rpy[2] = safety_pose[5]; 
 	if(arm_manager_->planMovementCartesian(jVals,xyz,rpy,planToBack,true)!=PLANNING_SUCCEED)
 	{
 		ROS_INFO("safety back planning fails");
 		return -1;
 	}	
-
-
-	// ******** MOVE ************* //
-
+	// ------------------------------------ MOVING ------------------------------------ //
 	// To Middle pose
 	ROS_INFO("To middle pose...");
-
 	int counter = 0;
 	arm_manager_->executePlan(planToMiddlePose, sync_);
 	if(!sync_)
@@ -167,16 +160,12 @@ int StateMachineIiwaHelper::GraspObject(std::vector<double> pose)// This pose is
 			sleep(0.05);
 			counter +=1;
 			if(counter == 100000)
-			{
-				
-				ROS_INFO("Failes reaching middle pose");
+			{			
+				ROS_INFO("Failed reaching middle pose");
 				return -1;
 			}
 		}
 	}
-	
-
-
 	// To previous of the object 
 	ROS_INFO("To prev object pose...");
 	counter = 0;
@@ -191,15 +180,12 @@ int StateMachineIiwaHelper::GraspObject(std::vector<double> pose)// This pose is
 			if(counter == 100000)
 			{
 				
-				ROS_INFO("Failes reaching prev pose");
+				ROS_INFO("Failed reaching prev pose");
 				return -1;
 			}
 		}
 	}
-
 	// To the object
-
-	
 	ROS_INFO("To to object pose...");
 	counter = 0;
 	arm_manager_->executePlan(planToPose, sync_);
@@ -213,16 +199,13 @@ int StateMachineIiwaHelper::GraspObject(std::vector<double> pose)// This pose is
 			if(counter == 100000)
 			{
 				
-				ROS_INFO("Failes reaching object pose");
+				ROS_INFO("Failed reaching object pose");
 				return -1;
 			}
 		}
 	}
-
-
 	// Back To Safety Pose
-	
-	ROS_INFO("To backt pose...");
+	ROS_INFO("To back pose...");
 	counter = 0;
 	arm_manager_->executePlan(planToBack, sync_);
 	if(!sync_)
@@ -234,73 +217,90 @@ int StateMachineIiwaHelper::GraspObject(std::vector<double> pose)// This pose is
 			counter +=1;
 			if(counter == 100000)
 			{
-				ROS_INFO("Failes reaching back pose");
+				ROS_INFO("Failed reaching back pose");
 				return -1;
-
 			}
 		}
 	}
-
-
 	return 1;
-
 }
 
-void StateMachineIiwaHelper::LeaveObject(int frame)// This pose is given in base frame for now, afterwards we should modify to CAM frame
+int StateMachineIiwaHelper::LeaveObject(int num_extracted_parts)// This pose is given in base frame for now, afterwards we should modify to CAM frame
 {	
-	// Phase I: Go to the side of the box (Depends on the ID)
-
+	// ------------------------------------- PLANIFICATION ------------------------------------- //
+	std::vector<double> jVals(7,0);
+	moveit::planning_interface::MoveGroupInterface::Plan planToLeavePose, planToSafetyPose;
+	//------------  Phase I: Leaving Pose  ------------//
 	std::vector<double> xyz(3,0), rpy(3,0);
-
-	if(frame %2 == 0){
-
-		xyz[0] = 0.6; xyz[1] = 0.4; xyz[2] = 0.5;
-		rpy[0] = M_PI; rpy[1] = 0.0; rpy[2] = 0.0; 
-
-	}else{
-		xyz[0] = 0.6; xyz[1] = -0.4; xyz[2] = 0.5;
-		rpy[0] = M_PI; rpy[1] = 0.0; rpy[2] = 0.0; 
-
-
-	}
-
-
-	arm_manager_->movePose(xyz, rpy);
-	while(!arm_manager_->movementFinished())
+	xyz[0] = leave_pose[0]; xyz[1] = leave_pose[1] + 0.1*num_extracted_parts; xyz[2] = leave_pose[2];
+	rpy[0] = leave_pose[3]; rpy[1] = leave_pose[4]; rpy[2] = leave_pose[5]; 
+	if(arm_manager_->planMovementCartesian(xyz,rpy,planToLeavePose,true)!=PLANNING_SUCCEED)
 	{
-		sleep(0.05);
-	}
-
-	//Phase II : UnGrasp
-
-	//Phase III : Back to Safety Pose
-
-	xyz[0] = 0.6; xyz[1] = 0.0; xyz[2] = 0.5;
-	rpy[0] = M_PI; rpy[1] = 0.0; rpy[2] = 0.0;
-
-	arm_manager_->movePose(xyz, rpy);
-	while(!arm_manager_->movementFinished())
+		ROS_INFO("leave pose planning fails");
+		return -1;
+	}	
+	int size = (int) planToLeavePose.trajectory_.joint_trajectory.points.size();
+	jVals = planToLeavePose.trajectory_.joint_trajectory.points[size-1].positions;
+	//------------  Phase II: SAFETY Pose  ------------//	
+	xyz[0] = safety_pose[0]; xyz[1] = safety_pose[1]; xyz[2] = safety_pose[2];
+	rpy[0] = safety_pose[3]; rpy[1] = safety_pose[4]; rpy[2] = safety_pose[5];
+	if(arm_manager_->planMovementCartesian(jVals,xyz,rpy,planToSafetyPose,true)!=PLANNING_SUCCEED)
 	{
-		sleep(0.05);
+		ROS_INFO("safety pose planning fails");
+		return -1;
 	}
-	
-	
-
+	// ------------------------------------ MOVING ------------------------------------ //
+	//------------  Phase I: Leaving Pose  ------------//
+	ROS_INFO("move to leaving pose...");
+	arm_manager_->executePlan(planToLeavePose, sync_);
+	if(!sync_)
+	{		
+		while(!arm_manager_->movementFinished())
+		{
+			sleep(0.05);
+		}
+	}
+	//------------  Phase II: UNGRASP PIECE ------------//
+	sleep(2);	
+	//------------  Phase III: SAFETY Pose  ------------//	
+	ROS_INFO("move to safety pose...");
+	arm_manager_->executePlan(planToSafetyPose, sync_);
+	if(!sync_)
+	{		
+		while(!arm_manager_->movementFinished())
+		{
+			sleep(0.05);
+		}
+	}
+	return 1;
 }
-void StateMachineIiwaHelper::moveSafePose()
+
+int StateMachineIiwaHelper::moveSafePose()
 {
 	ROS_INFO("Back to Safety Pose");
-
+	//------------  PLAN TO SAFETY  ------------//
+	moveit::planning_interface::MoveGroupInterface::Plan planToSafetyPose;
 	std::vector<double> xyz(3,0), rpy(3,0);
-
-	xyz[0] = 0.6; xyz[1] = 0.0; xyz[2] = 0.5;
-	rpy[0] = M_PI; rpy[1] = 0.0; rpy[2] = 0.0;
-
-	arm_manager_->movePose(xyz, rpy);
-	while(!arm_manager_->movementFinished())
+	xyz[0] = safety_pose[0]; xyz[1] = safety_pose[1]; xyz[2] = safety_pose[2];
+	rpy[0] = safety_pose[3]; rpy[1] = safety_pose[4]; rpy[2] = safety_pose[5];
+	if(arm_manager_->planMovementCartesian(xyz,rpy,planToSafetyPose,true)!=PLANNING_SUCCEED)
 	{
-		sleep(0.05);
+		ROS_INFO("ERROR : Can't go to safety pose!!!");
+		return -1;
 	}
+	// ----------- MOVE TO SAFETY POSE ---------- //
+	ROS_INFO("move to safety pose...");
+	sync_ = true;
+	arm_manager_->executePlan(planToSafetyPose, sync_);
+	if(!sync_)
+	{		
+		while(!arm_manager_->movementFinished())
+		{
+			sleep(0.05);
+		}
+	}
+	sync_=false;
+	return 1;
 }
 
 

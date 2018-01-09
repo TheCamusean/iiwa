@@ -15,13 +15,20 @@ class StateMachineIiwaHelper
 		int GraspObject(geometry_msgs::Pose pose);
 		int GraspObject(std::vector<double> pose);
 
-		void LeaveObject(int frame);
+		int LeaveObject(int num_extracted_parts);
 
 		void getDeliveryPlace(int frame, std::vector<double>& xyz, std::vector<double>& rpy);
 
-		void moveSafePose();
+		int moveSafePose();
 
 		bool releaseProduct();
+
+		std::vector<double> FromPose2Vector(geometry_msgs::Pose pose);
+		geometry_msgs::Pose container_pose;
+
+
+		std::vector<double> leave_pose;
+		std::vector<double> safety_pose;
 
 	private:
 		

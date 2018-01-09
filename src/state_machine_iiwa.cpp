@@ -47,6 +47,7 @@ protected:
 	geometry_msgs::Pose piece_pose_;
 	int find_container_trial_ = 0 ;
 	int find_piece_trial_ = 0 ;
+	int num_extracted_parts = 0;
 
 
 private:
@@ -96,11 +97,12 @@ public:
 		// helper variables
 		ros::Rate r(1);
 		bool success = true;
+		num_extracted_parts = 0;
 
 		// Goal variables
 		goal_.container = goal->container;
 		goal_.piece_type = goal->piece_type;
-		result_.num_extracted_parts = 0;
+		result_.num_extracted_parts = num_extracted_parts;
 
 		// push_back the seeds for the fibonacci sequence
 		feedback_.error_code = 0;
@@ -126,6 +128,8 @@ public:
 
 		}
 		// set the action state to succeeded
+		result_.num_extracted_parts = num_extracted_parts;
+		result_.success = success;
 		as_.setSucceeded(result_);
 	}
 	
@@ -153,6 +157,7 @@ public:
 						feedback_.error_code = 0;
 						feedback_.error_string = "Container found succesfully";
 						state_ = SELECT_TOOL;
+						state_machine_iiwa_helper_->container_pose = container_pose_;
 						find_container_trial_ = 0;
 					}
 					else if (find_container_trial_ < 5)
@@ -239,17 +244,11 @@ public:
 			case PICKING:
 			{
 				ROS_INFO_THROTTLE(5,"In PICKING state");
-				std::vector<double> xyz(3,0), rpy(3,0);
-				
-				// HERE WE SHOULD ADD THE TRANSFORMATION: FROM CAM TO BASE
-				xyz[0] = 0.5; xyz[1] = 0.0; xyz[2] = 0.3;
-				rpy[0] = 3.1415; rpy[1] = 0; rpy[2] = 0;
-				std::vector<double> pose = {xyz[0],xyz[1],xyz[2],rpy[0],rpy[1],rpy[2]};
 
 				int ret = state_machine_iiwa_helper_->GraspObject(piece_pose_);
 				if(ret == -1)
 				{
-					state_machine_iiwa_helper_->moveSafePose();
+					int safe = state_machine_iiwa_helper_->moveSafePose();
 					feedback_.error_code = -4;
 					feedback_.error_string = "picking error";
 					ROS_INFO("Movement unreachable");
@@ -261,7 +260,7 @@ public:
 					feedback_.error_code = 0;
 					feedback_.error_string = "picking correctly done";
 					ROS_INFO("Movement finished");
-					state_ = END;
+					state_ = LEAVE;
 				}
 			}
 			break;
@@ -269,6 +268,33 @@ public:
 			break;
 			case LEAVE:
 			{
+				ROS_INFO_THROTTLE(5,"In LEAVE state");
+				int ret = state_machine_iiwa_helper_->LeaveObject(num_extracted_parts);
+				if(ret == -1)
+				{
+					int safe = state_machine_iiwa_helper_->moveSafePose();
+					feedback_.error_code = -4;
+					feedback_.error_string = "leaving error";
+					ROS_INFO("Movement unreachable");
+					state_ = END;
+
+				}
+				else
+				{
+					feedback_.error_code = 0;
+					feedback_.error_string = "leaving correctly done";
+					ROS_INFO("Movement of piece leaving finished");
+					num_extracted_parts +=1;
+					if(num_extracted_parts == 4)
+					{
+						state_=END;
+						return true;
+					}
+					else
+					{
+						state_ = CAM_OBJECT_POSE;
+					}
+				}
 
 			}
 			break;
