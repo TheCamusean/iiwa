@@ -29,7 +29,8 @@ class StateMachineIiwaHelper
 
 
 		std::vector<double> leave_pose;
-		std::vector<double> safety_pose;
+		std::vector<double> safety_pose_container;
+		std::vector<double> safety_pose_leave;
 
 	private:
 		

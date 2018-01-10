@@ -8,7 +8,7 @@ name="euroc_iiwa" >
 
   <xacro:arg name="wing_down" default="true"/>
   <xacro:arg name="wing_up" default="false"/>
-  <xacro:arg name="miiwa" default="true"/>
+  <xacro:arg name="iiwa" default="true"/>
   <xacro:arg name="overhead" default="false"/>
   <xacro:arg name="safety" default="false"/>
 
@@ -25,7 +25,7 @@ name="euroc_iiwa" >
   <link name="world"/>
 
 	<xacro:scene name="euroc_env" parent="world">
-		<origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+		<origin xyz="-0.85 0.0 0.0" rpy="0 0 0"/>
 	</xacro:scene>
 
 </robot>

@@ -262,6 +262,7 @@ public:
 					feedback_.error_string = "picking correctly done";
 					ROS_INFO("Movement finished");
 					state_ = LEAVE;
+					sleep(2);
 				}
 			}
 			break;
@@ -273,7 +274,7 @@ public:
 				int ret = state_machine_iiwa_helper_->LeaveObject(num_extracted_parts);
 				if(ret == -1)
 				{
-					int safe = state_machine_iiwa_helper_->moveSafePose();
+					//int safe = state_machine_iiwa_helper_->moveSafePose();
 					feedback_.error_code = -4;
 					feedback_.error_string = "leaving error";
 					ROS_INFO("Movement unreachable");
@@ -294,6 +295,7 @@ public:
 					else
 					{
 						state_ = CAM_OBJECT_POSE;
+						//state_ = END;
 					}
 				}
 

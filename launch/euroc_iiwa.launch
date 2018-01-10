@@ -16,7 +16,8 @@
     
   </include>
 
-  <!-- enviroment                                                                -->
+
+  <!-- enviroment -->
   <!-- send robot urdf to param server -->
   <param name="world_description" command="$(find xacro)/xacro.py '$(find iiwa)/robots/logimat_env.urdf.xacro'"/>  
 
@@ -29,10 +30,6 @@
   <node name="spawn_environment_model" pkg="gazebo_ros" type="spawn_model" args="-x 0.0 -y 0.5 -z 0.01 -R 0 -P 0 -Y 0 -pause -urdf -param world_description 
     -model scene  -ros_namespace /" respawn="false" output="screen" />
     
-    
-
-
-
   <!-- robot description and controllers to param -->
   <param name="robot_description" command="$(find xacro)/xacro.py '$(find iiwa)/robots/iiwa.urdf.xacro'" />  
 
@@ -45,9 +42,13 @@
   <!-- spawn the robot -->
   <node name="spawn_robot_model" pkg="gazebo_ros" type="spawn_model" args=" 
     -x 0.0 -y -0.0 -z 0.0 -R 0 -P 0 -Y 0 -unpause -urdf -param robot_description  -model iiwa
-    -J lbr_iiwa_joint_1 0.065 -J lbr_iiwa_joint_2 0.628 -J lbr_iiwa_joint_3 -0.19 -J lbr_iiwa_joint_4 -1.37 -J lbr_iiwa_joint_5 -1.5 -J lbr_iiwa_joint_6 -1.11 -J lbr_iiwa_joint_7 0.882
+    -J lbr_iiwa_joint_1 -0.0835 -J lbr_iiwa_joint_2 -0.3587 -J lbr_iiwa_joint_3 0.5737 -J lbr_iiwa_joint_4 -1.8 -J lbr_iiwa_joint_5 0.21 -J lbr_iiwa_joint_6 1.33 -J lbr_iiwa_joint_7 0.0
      " 
-    respawn="false" output="screen" />  
+    respawn="false" output="screen" />
+
+<!--     -J lbr_iiwa_joint_1 0.065 -J lbr_iiwa_joint_2 0.628 -J lbr_iiwa_joint_3 -0.19 -J lbr_iiwa_joint_4 -1.37 -J lbr_iiwa_joint_5 -1.5 -J lbr_iiwa_joint_6 -1.11 -J lbr_iiwa_joint_7 0.882  
+ -->
+
 
       <!-- Controllers that come up started -->
       
