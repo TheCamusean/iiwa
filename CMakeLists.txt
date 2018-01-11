@@ -77,6 +77,8 @@ add_executable(camera_server src/getContainerPose.cpp)
 add_executable(state_machine_iiwa src/state_machine_iiwa.cpp)
 
 add_executable(client_control src/client_control.cpp)
+add_executable(manager_example src/manager_example.cpp)
+
 
 
 target_link_libraries(lib_state_machine_iiwa ${catkin_LIBRARIES})
@@ -87,6 +89,9 @@ target_link_libraries(camera_server ${catkin_LIBRARIES})
 
 target_link_libraries(client_control ${catkin_LIBRARIES})
 
+target_link_libraries(manager_example ${catkin_LIBRARIES})
+
+
 
 
 
@@ -96,6 +101,8 @@ add_dependencies(lib_state_machine_iiwa ${${PROJECT_NAME}_EXPORTED_TARGETS} ${ca
 add_dependencies(state_machine_iiwa ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} lib_state_machine_iiwa iiwa_generate_messages_cpp)
 
 add_dependencies(client_control ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} lib_state_machine_iiwa iiwa_generate_messages_cpp)
+
+add_dependencies(manager_example ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} lib_state_machine_iiwa iiwa_generate_messages_cpp)
 
 
 add_dependencies(camera_server iiwa_gencpp)
