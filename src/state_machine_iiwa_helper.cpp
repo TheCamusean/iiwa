@@ -120,9 +120,18 @@ int StateMachineIiwaHelper::GraspObject(std::vector<double> pose)// This pose is
 	jVals = planToSafeContainer.trajectory_.joint_trajectory.points[size-1].positions;
 	// -------------------------------------           Phase I: Container Pose -----------------------------------------------------//
 	std::vector<double> xyzrpy(6,0);
+	Eigen::Transform<double, 3, Eigen::Affine> container_base_H;
 	xyzrpy = FromPose2Vector(this->container_pose);
 	xyz[0] = xyzrpy[0]; xyz[1] = xyzrpy[1]; xyz[2] = xyzrpy[2];
-	rpy[0] = xyzrpy[3]; rpy[1] = xyzrpy[4]; rpy[2] = xyzrpy[5]; 
+	rpy[0] = xyzrpy[3]; rpy[1] = xyzrpy[4]; rpy[2] = xyzrpy[5];
+	eigen_functionalities::createHomogeneousMatrix(xyz, rpy, container_base_H);
+	// --------------------------From pose we rotate  90 º in order to have axis in similar orientation ---------------------------//
+	Eigen::Transform<double, 3, Eigen::Affine> rotz_90;
+	xyz[0] = 0.0; xyz[1] = 0.0; xyz[2] = 0.0;
+	rpy[0] = 0.0; rpy[1] = 0.0; rpy[2] = 3.1415/2;
+	eigen_functionalities::createHomogeneousMatrix(xyz, rpy, rotz_90);
+	eigen_functionalities::changeFrame(rotz_90, container_base_H, container_base_H); 
+	eigen_functionalities::extractXyzRpy(container_base_H, xyz, rpy);
 	//if(arm_manager_->planMovementCartesian(jVals,xyz,rpy,planToMiddlePose,true)!=PLANNING_SUCCEED)
 	if(arm_manager_->planMovementCartesianLin(jVals,xyz,rpy,planToMiddlePose,true,1.5,0.050,0.050)!=PLANNING_SUCCEED)
 	{
@@ -136,11 +145,19 @@ int StateMachineIiwaHelper::GraspObject(std::vector<double> pose)// This pose is
 	Eigen::Transform<double, 3, Eigen::Affine> obj_base_H, prev_obj_H, prev_base_H;
 	xyz[0] = pose[0]; xyz[1] = pose[1]; xyz[2] = pose[2];
 	rpy[0] = pose[3]; rpy[1] = pose[4]; rpy[2] = pose[5];
+
 	eigen_functionalities::createHomogeneousMatrix(xyz, rpy, obj_base_H);
+	// --------------------------From pose we rotate  90 º in order to have axis in similar orientation ---------------------------//
+	xyz[0] = 0.0; xyz[1] = 0.0; xyz[2] = 0.0;
+	rpy[0] = 0.0; rpy[1] = 0.0; rpy[2] = 3.1415/2;
+	eigen_functionalities::createHomogeneousMatrix(xyz, rpy, rotz_90);
+	eigen_functionalities::changeFrame(rotz_90, obj_base_H, obj_base_H);
+	// ------------------ From pose to previous pose (0.2 m before in z axis ) ----------------------------------//
 	xyz[0] = 0.0; xyz[1] = 0.0; xyz[2] = -0.2;
 	rpy[0] = 0.0; rpy[1] = 0.0; rpy[2] = 0.0;
 	eigen_functionalities::createHomogeneousMatrix(xyz, rpy, prev_obj_H);
 	eigen_functionalities::changeFrame(prev_obj_H, obj_base_H, prev_base_H);
+
 	eigen_functionalities::extractXyzRpy(prev_base_H, xyz, rpy);
 
 	ROS_INFO("Prev: %3.3f %3.3f %3.3f - %3.3f %3.3f %3.3f",xyz[0],xyz[1],xyz[2],rpy[0],rpy[1],rpy[2]);

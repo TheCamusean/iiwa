@@ -70,7 +70,8 @@ public:
 		spinner.start();
 	
 		// ARM MANAGER
-		arm_manager_ = new ArmManager("arm", "lbr_iiwa_joint_trajectory_position_controller","arm");
+		//arm_manager_ = new ArmManager("arm", "lbr_iiwa_joint_trajectory_position_controller","arm");
+		arm_manager_ = new ArmManager("manipulator", "iiwa/PositionJointInterface_trajectory_controller","arm");
 		arm_manager_->initManager();
 
 		//IIWA HELPER
