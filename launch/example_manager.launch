@@ -2,5 +2,6 @@
 
 	<rosparam file="$(find iiwa)/config/iiwa_config_new.yaml" command="load"/>
 	<node name="manager_example" pkg="iiwa" type="manager_example" output="screen">
+		<remap from="joint_states" to="iiwa/joint_states"/>
   	</node>
   </launch>
