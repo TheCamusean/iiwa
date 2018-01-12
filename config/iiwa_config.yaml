@@ -5,7 +5,7 @@ arm:
  tip_link: "lbr_iiwa_link_7"
  ik_number_attemps: 10
  ik_attemp_timeout: 100
- leave_pose: [0.6, 0.0, 0.3 , 0.0, 3.1415 , 0.0]
+ leave_pose: [0.5, -0.2, 0.0 , 0.0, 3.1415 , 0.0]
  safety_pose_container: [-1.9835, -0.3587, 0.5737, -1.8, 0.21, 1.33, 0.0]
  safety_pose_leave: [-0.0835, -0.3587, 0.5737, -1.8, 0.21, 1.33, 0.0]
  gripper_tool: [0,0,0,0,0,0]

@@ -308,7 +308,7 @@ int StateMachineIiwaHelper::LeaveObject(int num_extracted_parts)// This pose is 
 	jVals = planToSafeLeave.trajectory_.joint_trajectory.points[size-1].positions;
 	//------------  Phase I: Leaving Pose  ------------//
 	std::vector<double> xyz(3,0), rpy(3,0);
-	xyz[0] = leave_pose[0]; xyz[1] = leave_pose[1] - 0.1*num_extracted_parts; xyz[2] = leave_pose[2];
+	xyz[0] = leave_pose[0]; xyz[1] = leave_pose[1] + 0.1*num_extracted_parts; xyz[2] = leave_pose[2];
 	rpy[0] = leave_pose[3]; rpy[1] = leave_pose[4]; rpy[2] = leave_pose[5]; 
 	if(arm_manager_->planMovementCartesianLin(jVals,xyz,rpy,planToLeavePose,true,1.5,0.050,0.050)!=PLANNING_SUCCEED)
 	{
@@ -321,7 +321,7 @@ int StateMachineIiwaHelper::LeaveObject(int num_extracted_parts)// This pose is 
 	// ------------ Phase II : Move to a previous pose ---------------------//
 
 	Eigen::Transform<double, 3, Eigen::Affine> obj_base_H, prev_obj_H, prev_base_H;
-	xyz[0] = leave_pose[0]; xyz[1] = leave_pose[1] - 0.1*num_extracted_parts; xyz[2] = leave_pose[2];
+	xyz[0] = leave_pose[0]; xyz[1] = leave_pose[1] + 0.1*num_extracted_parts; xyz[2] = leave_pose[2];
 	rpy[0] = leave_pose[3]; rpy[1] = leave_pose[4]; rpy[2] = leave_pose[5]; 
 	eigen_functionalities::createHomogeneousMatrix(xyz, rpy, obj_base_H);
 	xyz[0] = 0.0; xyz[1] = 0.0; xyz[2] = -0.2;

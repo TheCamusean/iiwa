@@ -41,7 +41,6 @@ int main(int argc, char **argv)
 	ros::Rate r(10);
 	while (ros::ok())
 	{
-		ROS_INFO("%d",is_free_);
 		ros::spinOnce();
 		r.sleep();
 	} 
