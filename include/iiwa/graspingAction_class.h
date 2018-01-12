@@ -32,7 +32,7 @@ class GraspingAction
 protected:
 
 	ros::NodeHandle nh_;
-	actionlib::SimpleActionServer<iiwa::BinPickingAction> as_; // NodeHandle instance must be created before this line. Otherwise strange error occurs.
+	actionlib::SimpleActionServer<iiwa::GraspingAction> as_; // NodeHandle instance must be created before this line. Otherwise strange error occurs.
 	std::string action_name_;
 	// create messages that are used to published feedback/result
 	iiwa::GraspingFeedback feedback_;
@@ -67,7 +67,7 @@ public:
 
 	~BinPickingAction(void);
 
-	void executeCB(const iiwa::BinPickingGoalConstPtr &goal);
+	void executeCB(const iiwa::GraspingGoalConstPtr &goal);
 	
 	bool executeCycle();
 
