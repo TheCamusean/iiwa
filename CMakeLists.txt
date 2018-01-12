@@ -70,6 +70,8 @@ include_directories( include
 
 
 add_library(lib_state_machine_iiwa src/state_machine_iiwa_helper.cpp)
+add_library(lib_binpicking_iiwa src/binPickingAction_class.cpp)
+
 
 
 add_executable(camera_server src/getContainerPose.cpp)
@@ -83,7 +85,10 @@ add_executable(manager_example src/manager_example.cpp)
 
 target_link_libraries(lib_state_machine_iiwa ${catkin_LIBRARIES})
 
-target_link_libraries(state_machine_iiwa lib_state_machine_iiwa ${catkin_LIBRARIES})
+target_link_libraries(lib_binpicking_iiwa lib_state_machine_iiwa ${catkin_LIBRARIES})
+
+
+target_link_libraries(state_machine_iiwa lib_binpicking_iiwa ${catkin_LIBRARIES})
 
 target_link_libraries(camera_server ${catkin_LIBRARIES})
 
@@ -96,9 +101,11 @@ target_link_libraries(manager_example ${catkin_LIBRARIES})
 
 
 add_dependencies(lib_state_machine_iiwa ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(lib_binpicking_iiwa lib_state_machine_iiwa ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 
-add_dependencies(state_machine_iiwa ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} lib_state_machine_iiwa iiwa_generate_messages_cpp)
+
+add_dependencies(state_machine_iiwa ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} lib_binpicking_iiwa iiwa_generate_messages_cpp)
 
 add_dependencies(client_control ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} lib_state_machine_iiwa iiwa_generate_messages_cpp)
 
