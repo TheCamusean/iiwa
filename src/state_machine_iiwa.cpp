@@ -17,6 +17,9 @@
 
 #include "iiwa/binPickingAction_class.h"
 
+#include <ros/callback_queue.h>
+
+
 
 int main(int argc, char **argv)
 {
@@ -35,9 +38,12 @@ int main(int argc, char **argv)
 	ROS_INFO("%d",is_free_);
 
 	//ros::spin();
+	ros::Rate r(10);
 	while (ros::ok())
 	{
 		ROS_INFO("%d",is_free_);
+		ros::spinOnce();
+		r.sleep();
 	} 
 		// ros::waitForShutdown();
 	return 0;	

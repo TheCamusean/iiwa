@@ -27,7 +27,7 @@ enum StateMachine
 	
 };
 
-class BinPickingAction
+class GraspingAction
 {
 protected:
 
@@ -35,9 +35,9 @@ protected:
 	actionlib::SimpleActionServer<iiwa::BinPickingAction> as_; // NodeHandle instance must be created before this line. Otherwise strange error occurs.
 	std::string action_name_;
 	// create messages that are used to published feedback/result
-	iiwa::BinPickingFeedback feedback_;
-	iiwa::BinPickingResult result_;
-	iiwa::BinPickingGoal goal_;
+	iiwa::GraspingFeedback feedback_;
+	iiwa::GraspingResult result_;
+	iiwa::GraspingGoal goal_;
 	ros::ServiceClient container_client_;
 	ros::ServiceClient piece_client_;
 

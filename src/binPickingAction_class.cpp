@@ -35,7 +35,7 @@ BinPickingAction::BinPickingAction(std::string name , bool& is_free) :
 as_(nh_, name, boost::bind(&BinPickingAction::executeCB, this, _1), false),
 action_name_(name)
 {
-	is_free_ = is_free;
+	is_free_ = &is_free;
 	ros::AsyncSpinner spinner(0);
 	spinner.start();
 
@@ -64,7 +64,7 @@ BinPickingAction::~BinPickingAction(){}
 void BinPickingAction::executeCB(const iiwa::BinPickingGoalConstPtr &goal)
 {
 
-	is_free_ = false;
+	*is_free_ = false;
 	// helper variables
 	ros::Rate r(1);
 	bool success = true;
