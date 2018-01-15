@@ -19,7 +19,18 @@
 
 #include <ros/callback_queue.h>
 
+#include "iiwa/GraspInfo.h"
 
+bool is_free_ = true;
+std::vector<geometry_msgs::Pose> leave_poses_;
+
+
+
+bool grasp(iiwa::GraspInfo::Request  &req,
+         iiwa::GraspInfo::Response &res)
+{
+  return true;
+}
 
 int main(int argc, char **argv)
 {
@@ -27,15 +38,14 @@ int main(int argc, char **argv)
 	ROS_INFO("Starting program...");
 
 
-	bool is_free_ = true;
 		
 	// Initialize the action server
-	ROS_INFO("%d",is_free_);
-
-	BinPickingAction binpicking("binpicking" , is_free_);
+	ros::NodeHandle n("");
 
 
-	ROS_INFO("%d",is_free_);
+	BinPickingAction binpicking("binpicking" , is_free_, leave_poses_);
+
+	ros::ServiceServer service = n.advertiseService("grasping", grasp);
 
 	//ros::spin();
 	ros::Rate r(10);

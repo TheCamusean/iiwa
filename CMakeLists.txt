@@ -28,6 +28,7 @@ add_service_files(
   FILES
   GetContainerPose.srv
   GetPiecePose.srv
+  GraspInfo.srv
 )
 
 ## Generate actions in the 'action' folder

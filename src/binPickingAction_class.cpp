@@ -31,11 +31,13 @@ enum StateMachine
 */
 
 
-BinPickingAction::BinPickingAction(std::string name , bool& is_free) :
+BinPickingAction::BinPickingAction(std::string name , bool& is_free , std::vector<geometry_msgs::Pose>& leave_poses) :
 as_(nh_, name, boost::bind(&BinPickingAction::executeCB, this, _1), false),
 action_name_(name)
 {
 	is_free_ = &is_free;
+	leave_poses_ = &leave_poses;
+
 	ros::AsyncSpinner spinner(0);
 	spinner.start();
 
@@ -73,6 +75,9 @@ void BinPickingAction::executeCB(const iiwa::BinPickingGoalConstPtr &goal)
 	// Goal variables
 	goal_.container = goal->container;
 	goal_.piece_type = goal->piece_type;
+	goal_.num_parts = goal->num_parts;
+	leave_poses_->resize(goal_.num_parts);
+
 	result_.num_extracted_parts = num_extracted_parts;
 
 	// push_back the seeds for the fibonacci sequence
@@ -101,6 +106,7 @@ void BinPickingAction::executeCB(const iiwa::BinPickingGoalConstPtr &goal)
 	// set the action state to succeeded
 	result_.num_extracted_parts = num_extracted_parts;
 	result_.success = success;
+	*is_free_ = true;
 	as_.setSucceeded(result_);
 }
 
@@ -258,7 +264,7 @@ bool BinPickingAction::executeCycle()
 				feedback_.error_string = "leaving correctly done";
 				ROS_INFO("Movement of piece leaving finished");
 				num_extracted_parts +=1;
-				if(num_extracted_parts == 4)
+				if(num_extracted_parts == goal_.num_parts)
 				{
 					state_=END;
 					return true;

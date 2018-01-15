@@ -5,6 +5,9 @@
 # string indicating pice type to pick, for example "class1_raw".
 string piece_type
 
+#number of parts to pick
+int32 num_parts
+
 # number of the container that has the part to pick from 1 to 3.
 int32 container
 
