@@ -16,27 +16,17 @@
 #include "geometry_msgs/Pose.h"
 
 #include "iiwa/binPickingAction_class.h"
-/*
-enum StateMachine
-{
-	END,
-	CAM_CONTAINER_POSE,
-	SELECT_TOOL,
-	CAM_OBJECT_POSE,
-	PICKING,
-	LEAVE,
-	BACK_HOME,
-	
-};
-*/
 
 
-BinPickingAction::BinPickingAction(std::string name , bool& is_free , std::vector<geometry_msgs::Pose>& leave_poses) :
+BinPickingAction::BinPickingAction(std::string name , bool& is_free) :
 as_(nh_, name, boost::bind(&BinPickingAction::executeCB, this, _1), false),
 action_name_(name)
 {
 	is_free_ = &is_free;
-	leave_poses_ = &leave_poses;
+
+	ros::NodeHandle nh_robot("arm");
+
+	nh_robot.getParam("leave_pose", leave_position_0);
 
 	ros::AsyncSpinner spinner(0);
 	spinner.start();
@@ -76,7 +66,6 @@ void BinPickingAction::executeCB(const iiwa::BinPickingGoalConstPtr &goal)
 	goal_.container = goal->container;
 	goal_.piece_type = goal->piece_type;
 	goal_.num_parts = goal->num_parts;
-	leave_poses_->resize(goal_.num_parts);
 
 	result_.num_extracted_parts = num_extracted_parts;
 
@@ -109,6 +98,8 @@ void BinPickingAction::executeCB(const iiwa::BinPickingGoalConstPtr &goal)
 	*is_free_ = true;
 	as_.setSucceeded(result_);
 }
+
+
 
 bool BinPickingAction::executeCycle()
 {

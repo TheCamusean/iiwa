@@ -49,7 +49,8 @@ protected:
 	int num_extracted_parts = 0;
 
 	bool *is_free_;
-	std::vector<geometry_msgs::Pose> *leave_poses_;
+	
+	std::vector<double> leave_position_0;
 
 
 private:
@@ -64,7 +65,9 @@ private:
 
 public:
 
-	BinPickingAction(std::string name, bool& is_free, std::vector<geometry_msgs::Pose>& leave_poses);
+	BinPickingAction(std::string name, bool& is_free);
+
+	void add_leave_pose();
 
 	~BinPickingAction(void);
 

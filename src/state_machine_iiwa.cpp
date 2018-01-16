@@ -22,8 +22,6 @@
 #include "iiwa/GraspInfo.h"
 
 bool is_free_ = true;
-std::vector<geometry_msgs::Pose> leave_poses_;
-
 
 
 bool grasp(iiwa::GraspInfo::Request  &req,
@@ -43,7 +41,7 @@ int main(int argc, char **argv)
 	ros::NodeHandle n("");
 
 
-	BinPickingAction binpicking("binpicking" , is_free_, leave_poses_);
+	BinPickingAction binpicking("binpicking" , is_free_);
 
 	ros::ServiceServer service = n.advertiseService("grasping", grasp);
 

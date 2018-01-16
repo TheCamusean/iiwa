@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
 	control_msgs
 	arm_manager
 	message_generation
+  iiwa_ros
 	)
 
 
@@ -114,3 +115,13 @@ add_dependencies(manager_example ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 
 
 add_dependencies(camera_server iiwa_gencpp)
+
+
+add_executable(setting_control_mode_sim src/setting_control_mode.cpp)
+add_dependencies(setting_control_mode_sim iiwa_msgs_generate_messages_cpp)
+target_link_libraries(setting_control_mode_sim ${catkin_LIBRARIES})
+
+add_executable(command_robot_sim src/command_robot_sim.cpp)
+add_dependencies(command_robot_sim iiwa_msgs_generate_messages_cpp)
+target_link_libraries(command_robot_sim ${catkin_LIBRARIES})
+

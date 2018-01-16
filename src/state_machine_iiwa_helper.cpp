@@ -5,8 +5,6 @@
 #include "sensor_msgs/JointState.h"
 #include "geometry_msgs/Pose.h"
 
-
-
 StateMachineIiwaHelper::StateMachineIiwaHelper(ArmManager* arm_manager):
 sync_(false)
 {
