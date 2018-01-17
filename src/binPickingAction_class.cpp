@@ -17,6 +17,11 @@
 
 #include "iiwa/binPickingAction_class.h"
 
+// IIWA ROS
+#include "iiwa_ros.h"
+#include "iiwa_ros/conversions.h"
+
+
 
 BinPickingAction::BinPickingAction(std::string name , bool& is_free) :
 as_(nh_, name, boost::bind(&BinPickingAction::executeCB, this, _1), false),
@@ -31,13 +36,16 @@ action_name_(name)
 	ros::AsyncSpinner spinner(0);
 	spinner.start();
 
+	my_iiwa_ = new iiwa_ros::iiwaRos();
+  	my_iiwa_->init();
+
 	// ARM MANAGER
 	//arm_manager_ = new ArmManager("arm", "lbr_iiwa_joint_trajectory_position_controller","arm");
 	arm_manager_ = new ArmManager("manipulator", "iiwa/PositionJointInterface_trajectory_controller","arm");
 	arm_manager_->initManager();
 
 	//IIWA HELPER
-	state_machine_iiwa_helper_ = new StateMachineIiwaHelper(arm_manager_);
+	state_machine_iiwa_helper_ = new StateMachineIiwaHelper(arm_manager_, my_iiwa_);
 
 	//TO CAMERA SERVICES
 	container_client_ = nh_.serviceClient<iiwa::GetContainerPose>("GetContainerPose");

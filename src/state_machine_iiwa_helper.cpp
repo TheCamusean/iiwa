@@ -5,10 +5,17 @@
 #include "sensor_msgs/JointState.h"
 #include "geometry_msgs/Pose.h"
 
-StateMachineIiwaHelper::StateMachineIiwaHelper(ArmManager* arm_manager):
+// IIWA ROS
+#include "iiwa_ros.h"
+#include "iiwa_ros/conversions.h"
+
+
+
+StateMachineIiwaHelper::StateMachineIiwaHelper(ArmManager* arm_manager, iiwa_ros::iiwaRos* my_iiwa):
 sync_(false)
 {
 	arm_manager_ = arm_manager;
+	my_iiwa_ = my_iiwa;
 
 	ros::NodeHandle nh("~");
 

@@ -15,6 +15,12 @@
 //Geometry_msgs
 #include "geometry_msgs/Pose.h"
 
+// IIWA ROS
+#include "iiwa_ros.h"
+#include "iiwa_ros/conversions.h"
+
+
+
 enum StateMachine
 {
 	END,
@@ -56,6 +62,11 @@ protected:
 private:
 
 	ArmManager* arm_manager_;
+
+	iiwa_ros::iiwaRos* my_iiwa_;
+
+
+  
 	StateMachine state_;
 	StateMachineIiwaHelper* state_machine_iiwa_helper_;
 	bool initialization_done_;

@@ -2,12 +2,17 @@
 #include "sensor_msgs/JointState.h"
 #include "geometry_msgs/Pose.h"
 
+// IIWA ROS
+#include "iiwa_ros.h"
+#include "iiwa_ros/conversions.h"
+
+
 
 class StateMachineIiwaHelper
 {
 	public:
 	
-		StateMachineIiwaHelper(ArmManager* arm_manager);
+		StateMachineIiwaHelper(ArmManager* arm_manager,iiwa_ros::iiwaRos* my_iiwa);
 		~StateMachineIiwaHelper();
 
 		// Tool Selection
@@ -36,6 +41,12 @@ class StateMachineIiwaHelper
 		
 		//Arm and gripper manager
 		ArmManager* arm_manager_;
+
+		// IIWA-ROS
+
+		iiwa_ros::iiwaRos* my_iiwa_;
+
+
 
 		ros::NodeHandle nh_;
 
